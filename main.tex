@@ -1,8 +1,18 @@
-\documentclass[12pt]{report}
+\documentclass[12pt,twoside]{report}
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx}
 \usepackage{datetime}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+% fancyhdr
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% graphicx
+\usepackage{graphicx}
 \graphicspath{{images/}}
+% biblatex
+\usepackage[square,numbers]{natbib}
+\bibliographystyle{unsrtnat}
+
+\usepackage[nottoc]{tocbibind}
 
 \title{
     {Agent-based Strategies in Maze-like Environments}\\
@@ -26,22 +36,21 @@
 
 \tableofcontents
 
-% \chapter{Introduction}
-% \input{chapters/introduction}
+\chapter{Theoretical Background}
+\input{chapters/theory}
 
- \chapter{Theoretical Background}
- \input{chapters/theory}
+\chapter{Our Approach}
+\input{chapters/approach}
 
- \chapter{Our Approach}
- \input{chapters/approach}
+\chapter{Results and Evaluations}
+\input{chapters/results}
 
- \chapter{Results and Evaluations}
- \input{chapters/results}
+\chapter{Architecture}
+\input{chapters/architecture}
 
- \chapter{Architecture}
- \input{chapters/architecture}
+\chapter{Conclustion and Future Work}
+\input{chapters/conclusion}
 
- \chapter{Conclustion and Future Work}
- \input{chapters/conclusion}
+\bibliography{references}
 
 \end{document}
