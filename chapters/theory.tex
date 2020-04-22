@@ -1,5 +1,5 @@
-% General description
-This chapter introduces the concepts necessary to understanding the subject of this thesis. We aim to:
+This chapter introduces the concepts necessary to understanding the subject of this thesis.
+We aim to:
 \begin{itemize}
     \item present the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment;
     \item explain how we can reason about problems using this paradigm;
@@ -73,16 +73,31 @@ In a game of chess, a chess-playing agent has a finite number of possible action
 Chess is therefore a discrete environment.
 An agent driving a car, on the other hand, has control over some real-valued parameters of the car (steering angle, speed and so on).
 Thus, the domain of possible actions in real-world driving is continuous.
-We used discreteness and continuity to describe the domain of available action.
-However, the same property describes \emph{time} inside the environment: in discrete time, time spent deciding does not count. The opposite is true for continuous time representation (for example, in our driving analogy -- every second spent not making a decision is stalling).
+We used discreteness and continuity to describe the domain of available actions.
+However, the same property describes \emph{time} inside the environment: in discrete time, time spent deciding does not influence the outcome. The opposite is true for continuous time representation. Coming back to our driving analogy -- every second spent not making a decision is stalling.
 
 \textbf{Known} and \textbf{unknown}.
 This refers to the agent's knowledge of the laws governing its environment. In a known environment, the agent knows the rules of its world a priori. Otherwise, an agent has to learn how the environment works in order to make effective decisions.
 
+% Can include environment classes and environment generators
+
 \subsection{Learning Agents} \label{learning-agents}
-Learning agents learn and shit.
+An agent system would be useless by modern standards if it had no capacity to \emph{learn from past experience}.
+In this paper, we are intereseted in creating an autonomous learning agent.
+To understand learning agents, we break down the anatomy of such a program.
+It is worth mentioning that the actual architecture of the program will not be a one-to-one match to this conceptual tour.
+
+Russel and Norvig give an excellent description on the essence of learning in intelligent agents in \cite{aima}: 
+\begin{quote}
+    Learning in intelligent agents can be summarized as a process of modification of each component of the agent to bring the components into closer agreement with the available feedback information, thereby improving the overall performance of the agent.
+\end{quote}
 
 % Link to brainstorming https://docs.google.com/document/d/1Dk2yzwWefNas-AZOo0nMAd4xbwd7LNU9qV0miYcRuBc/edit
+
+% But what are those components? Dive in: learning element, performance element, critic, problem generator
+% Add a figure
+
+% 1/4 OF CHAPTER 1 COMPLETE
 
 \section{Reinforcement Learning} \label{reinforcement-learning}
 % Here we introduce many fundamental notions of reinforcement learning
