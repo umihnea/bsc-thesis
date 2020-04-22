@@ -1,4 +1,4 @@
-% General chapter description
+% General description
 This chapter introduces the concepts necessary to understanding the subject of this thesis. We aim to:
 \begin{itemize}
     \item present the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment;
@@ -9,10 +9,82 @@ This chapter introduces the concepts necessary to understanding the subject of t
 \end{itemize}
 
 \section{AI and Intelligent Agents}
-% Link to brainstorming https://docs.google.com/document/d/1Dk2yzwWefNas-AZOo0nMAd4xbwd7LNU9qV0miYcRuBc/edit
-An agent is defined as a {thing that acts} \cite{aima}.
+The concept of rational agent is central to the study of artificial intelligence. 
+It is a natural evolution to the \textit{laws of thought} approach in AI (using a set of logical rules to derive new knowledge).
 
-\section{Reinforcement Learning}
+As pointed out in \cite{aima}, inference does not capture all of rationality.
+As complex environments imply \textit{uncertain situations} (where there is no provably correct choice to make), a finite set of rules can prove inadequate.
+The agent-based approach captures a more complete definition of rationality by shifting focus from making correct inferrences to producing \emph{efficient behaviour}.
+
+\subsection{Definition. Agent Function and Agent Program}
+According to \cite{aima}, an \textbf{agent} is simply something that percieves and acts in an environment.
+An agent can be split into two major components, each fulfilling a fundamental function:
+\emph{perceptors} (sensors) manage \emph{perception} and \emph{actuators} act upon the environment.
+This is the simplest useful division. We present a more elaborate division later, in Section \ref{learning-agents}.
+
+It is sometimes useful to reason about agents in a mathematical space.
+For this, there exists the concept of \emph{agent function}.
+An \textbf{agent function} maps what the agent percieves (every ``snapshot'' of perception, called a \emph{percept}) to an action.
+Outside the world of very small, ideal examples, any agent function can be considered \emph{infinite}.
+The implementation of an agent function is an \textbf{agent program}, which is what AI is actually concerned with building and perfecting.
+This implementation is, of course, finite.
+
+The term \emph{agent} \textbf{can} designate physical robots working in real-life environments.
+However, in this paper we use the term \textit{agent} to refer exclusively to softbots (or software robots).
+The problem that we solve can be entirely modeled in a virtual space.
+
+\subsection{Task Environments}
+Simply put, \textbf{task environments} are a way to express a problem to which an agent is the solution.
+The design of the agent depends on the attributes of its environment.
+
+In this paradigm, we can decompose a task into several subcomponents, often abbreviated \textbf{PEAS}\cite{aima}, comprising of:
+\begin{enumerate}
+    \item \textbf{performance measure}, a function which measures the performance of the agent;
+    \item \textbf{environment}, the ``world'' the agents interacts with;
+    \item \textbf{actuators}, the agent's means of action;
+    \item \textbf{sensors}, the agent's means of perception;
+\end{enumerate}
+
+The \textbf{performance measure} has many possible representations, depending on the problem.
+Its primary purpose is to measure how effective the behaviour of the agent is, with regard to the given goals.
+In reinforcement learning, we measure this effectiveness using a \textbf{reward function}.
+We will elaborate on this in our section on reinforcement learning (Section \ref{reinforcement-learning}).
+
+\subsubsection{Environment Classification}
+
+Modeling real-world use cases requires understanding the vast diversity of environments.
+In the following paragraphs, we present some \textbf{classification criteria} for task environments that are also provided in \cite{aima}.
+
+\textbf{Observability} can be \emph{full} or \emph{partial}.
+In a fully observable environment, the agent has full information of all the relevant aspects of the world (for example, a chess-playing agent sees the entire chessboard).
+The latter means the agent operates with restricted information.
+Many real-world problems have partial observability due to sensor noise or memory/CPU constraints.
+
+\textbf{Single- or multi-agent}.
+Multi-agent environments are a tool for studying emergent behaviour, wherein relatively simple agents construct elegant and complex solutions to problems.
+The techiques concerning the design of multi-agent systems are frequently subtle and can be treated as another subject completely.
+
+\textbf{Stochasticity}.
+In a \emph{deterministic} environment, every state is completely determined by its previous. Otherwise, the environment is \emph{stochastic}. An environment is \textbf{uncertain} when it is stochastic and/or partially observable.
+
+\textbf{Discreteness} and \textbf{continuity}.
+This is best understood by example.
+In a game of chess, a chess-playing agent has a finite number of possible actions.
+Chess is therefore a discrete environment.
+An agent driving a car, on the other hand, has control over some real-valued parameters of the car (steering angle, speed and so on).
+Thus, the domain of possible actions in real-world driving is continuous.
+We used discreteness and continuity to describe the domain of available action.
+However, the same property describes \emph{time} inside the environment: in discrete time, time spent deciding does not count. The opposite is true for continuous time representation (for example, in our driving analogy -- every second spent not making a decision is stalling).
+
+\textbf{Known} and \textbf{unknown}.
+This refers to the agent's knowledge of the laws governing its environment. In a known environment, the agent knows the rules of its world a priori. Otherwise, an agent has to learn how the environment works in order to make effective decisions.
+
+\subsection{Learning Agents} \label{learning-agents}
+Learning agents learn and shit.
+
+% Link to brainstorming https://docs.google.com/document/d/1Dk2yzwWefNas-AZOo0nMAd4xbwd7LNU9qV0miYcRuBc/edit
+
+\section{Reinforcement Learning} \label{reinforcement-learning}
 % Here we introduce many fundamental notions of reinforcement learning
 % Include a case study of AlphaGo
 
