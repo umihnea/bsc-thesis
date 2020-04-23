@@ -3,12 +3,20 @@
 \usepackage{datetime}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \setlength{\headheight}{15pt}
+
 % fancyhdr
 \usepackage{fancyhdr}
+\newcommand{\changefont}{%
+    \fontsize{9}{11}\selectfont
+}
 \pagestyle{fancy}
+\fancyhead[LE,RO]{\changefont \slshape \rightmark} %section
+\fancyhead[RE,LO]{\changefont \slshape \leftmark} %chapter
+
 % graphicx
 \usepackage{graphicx}
 \graphicspath{{images/}}
+
 % biblatex
 \usepackage[square,numbers]{natbib}
 \bibliographystyle{unsrtnat}
