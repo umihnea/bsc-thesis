@@ -1,14 +1,6 @@
-This chapter introduces the concepts necessary to understanding the subject of this thesis.
-We aim to:
-\begin{itemize}
-    \item present the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment;
-    \item explain how we can reason about problems using this paradigm;
-    \item introduce key concepts in the field of \emph{reinforcement learning (RL)};
-    \item describe \emph{Q-learning} and how we can use neural networks to improve the classic algorithm;
-    \item exemplify a successful application of this approach.
-\end{itemize}
+This chapter aims to provide a short introduction to the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment.
+Understanding how to formulate relevant problems in terms of agents learning from controlled environments is necessary to the core technique presented in this paper -- reinforcement learning (presented in the next chapter).
 
-\section{AI and Intelligent Agents} \label{agents-intro}
 The concept of rational agent is central to the study of artificial intelligence. 
 It is a natural evolution to the \textit{laws of thought} approach in AI (using a set of logical rules to derive new knowledge).
 
@@ -16,7 +8,7 @@ As pointed out in \cite{aima}, inference does not capture all of rationality.
 As complex environments imply \textit{uncertain situations} (where there is no provably correct choice to make), a finite set of rules can prove inadequate.
 The agent-based approach captures a more complete definition of rationality by shifting focus from making correct inferrences to producing \emph{efficient behaviour}.
 
-\subsection{Definition. Agent Function and Agent Program}
+\section{Agent Function and Agent Program}
 According to \cite{aima}, an \textbf{agent} is simply something that percieves and acts in an environment.
 An agent can be split into two major components, each fulfilling a fundamental function:
 \emph{perceptors} (sensors) manage \emph{perception} and \emph{actuators} act upon the environment.
@@ -33,7 +25,7 @@ The term \emph{agent} \textbf{can} designate physical robots working in real-lif
 However, in this paper we use the term \textit{agent} to refer exclusively to softbots (or software robots).
 The problem that we solve can be entirely modeled in a virtual space.
 
-\subsection{Task Environments}
+\section{Task Environments}
 Simply put, \textbf{task environments} are a way to express a problem to which an agent is the solution.
 The design of the agent depends on the attributes of its environment.
 
@@ -50,7 +42,7 @@ Its primary purpose is to measure how effective the behaviour of the agent is, w
 In reinforcement learning, we measure this effectiveness using a \textbf{reward function}.
 We will elaborate on this in our section on reinforcement learning (Section \ref{reinforcement-learning}).
 
-\subsubsection{Environment Classification}
+\subsection{Environment Classification}
 
 Modeling real-world use cases requires understanding the vast diversity of environments.
 In the following paragraphs, we present some \textbf{classification criteria} for task environments that are also provided in \cite{aima}.
@@ -81,7 +73,7 @@ This refers to the agent's knowledge of the laws governing its environment. In a
 
 % Can include environment classes and environment generators
 
-\subsection{Learning Agents} \label{learning-agents}
+\section{Learning Agents} \label{learning-agents}
 In this paper, we are intereseted in creating an autonomous learning agent.
 An agent system would be useless by modern standards if it had no capacity to \textbf{learn from past experience}.
 In this section, we aim to understand learning agents by going through the anatomy of their system.
@@ -114,14 +106,14 @@ A learning agent overview figure, closely following the schematic provided in \c
     \label{fig:aima-learning-agent}
 \end{figure}
 
-\subsubsection{Learning and Performance}
+\subsection{Learning and Performance}
 The performance elements provides the basic function of the agent: it perceives, decides and acts.
 The learning element's job is to improve this performance based on feedback, coming from an outside observer (the critic).
 The learning element's design varies depending on the problem and how the agent is meant to interact with it.
 One common example of implementation is a \emph{neural network}.
 We will see how deep learning comes into play in Chapter \ref{deep-q-learning}.
 
-\subsubsection{The Critic}
+\subsection{The Critic}
 An agent cannot tell whether its behaviour is effective just by observing changes in the environment.
 It needs a \textbf{critic} that provides feedback to the learning element about its performance in the world.
 The critic can esentially be viewed as a stand-alone, external entity.
@@ -129,24 +121,9 @@ It is based on a fixed performance standard which does not depend on the agent's
 In fact, it is imperative for the critic to be kept separate of agent state.
 This prevents the agent of ``deluding'' itself that it is doing a good job.
 
-\subsubsection{The Problem Generator}
+\subsection{The Problem Generator}
 Agents can get stuck making decisions that yield good but suboptimal results (local optima, a well-known problem in AI).
 This happens because the agent bases its calculations on limited knowledge.
 It needs a component to take care of adding new information into its system.
 The problem generator solves this problem of \textbf{exploration}:
 choosing options that yield suboptimal results in the short term, in order to discover better strategies on the long term.
-
-\section{Reinforcement Learning} \label{reinforcement-learning}
-\input{chapters/rl}
-
-\section{Q-Learning}
-% Here we start by describing naive Q-learning
-
-% then we introduce deep Q-learning
-% in this subsec, we will also do a quick introduction to neural networks
-
-\section{Deep Q-Learning} \label{deep-q-learning}
-
-% Here we do a rundown of possible improvements of Q-learning: Double Q-learning and Duelling Q-learning
-
-% Include a case study of DQN in the original Atari paper
