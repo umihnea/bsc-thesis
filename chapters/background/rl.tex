@@ -1,0 +1,120 @@
+\textbf{Reinforcement learning (RL)} is an area of machine learning that epitomizes the agent-based approach.
+RL is unique within its field as it is directly focused on goal-directed learning from agent-environment interaction \cite{rlai}.
+At the core of RL lays the reward function (or signal), which perfectly describes goals established by the problem.
+
+In the following chapter, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this paper.
+
+In section \ref{rl:dp} we cover the first solution technique: using dynamic programming in a known, finite MDP to find its optimal solution.
+In section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte-Carlo learning.
+In section \ref{rl:td}, we visit temporal-difference learning and finally develop our solution using Q-learning in section \ref{rl:q-learning}.
+
+\subsection{Components and Notation}
+Introduction into reinforcement learning supposes familiarity with the paradigm's simple-but-effective mathematical framework.
+We present the theory behind Markov decision processes (MDPs) and then we shift our attention to explaing the components of a reinforcement learning agent.
+
+\subsubsection{Finite Markov Decision Processes}
+Finite Markov decision processes are a formalization of a reinforcement learning problem -- any problem which can be represented as a finite MDP can be solved using a RL technique.
+
+The feedback loop is central to understanding the reinforcement learning dynamic.
+This is just a reiteration of the contents in our previous chapter:
+an \textbf{agent} acts upon an \textbf{environment}, which reacts according to its set of governing rules.
+Each iteration takes place at a discrete time step \(t = 0,1,2,\dots \) (although there are continous variants of a Markov process, we are not concerned with them).
+
+\begin{figure}[ht]
+    \centering
+    \caption{Feedback Loop. (Partial reproduction from \cite{rlai})}
+    \vspace*{0.2cm}
+    \includegraphics[width=0.5\textwidth]{agent-env-fig}
+\end{figure}
+
+\begin{enumerate}
+    \item The agent is in state \(s\) and picks action \(a\).
+    \item It receives a reward \(r\) for its action. This (immediate) reward signal is problem-defined and quantifies the agent’s goal.
+    \item The environment reacts, sending the agent into the next state \(s'\).
+\end{enumerate}
+
+A \textbf{Markov decision process (MDP)} is defined as a tuple \(\langle S, A, P, R, \gamma \rangle\), in which:
+\begin{enumerate}
+    \item \(S\) is the finite set of all states.
+    \item \(A\) is the finite set of all possible actions.
+    \item \(P\) is the state transition probability function, where \(P_a(s, s')\) denotes the probability of starting in state \(s\) and ending up in state \(s'\) by taking action \(a\).
+    \item \(R\) is the reward function, where \(R_a(s, s')\) is a value in \(\mathbb{R}\) and represents the reward received for starting in state \(s\) and ending up in state \(s'\) by taking action \(a\).
+    \item \(\gamma\) is the discount factor (used when computing the \textbf{return}), \(\gamma \in [0, 1]\).
+\end{enumerate}
+
+The \textbf{state} refers to the internal state of the agent \footnote{Sometimes we may also refer to the state of the environment, but context will clarify. Environment state and agent state only completely match in full observability environments.}.
+A state \(S_t\) contains relevant information from the environment at a given time step \(t\).
+A key point in Markov processes is that a correctly formulated state captures all the relevant information and removes the need of explicitly memorizing state history.
+This is known as the \textbf{Markov property} \cite{silver-lectures}.
+
+A \textbf{policy \(\pi\)} completely characterizes an agent’s behaviour.
+``It is a mapping from perceived states of the environment to actions to be taken in those states'' \cite{rlai}.
+Policies can be deterministic (i.e. ``if this then that'' rules) or stochastic.
+A \textbf{stochastic policy}, denoted \(\pi(a \given s)\), is a probability distribution over actions, given a state.
+
+The \textbf{reward} models the problem-defined goals as a scalar that can be associated with each state transition.
+``The reward signal is the primary basis of altering the policy.'' \cite{rlai}.
+The assertion that we can completely and correctly model all goals using reward functions is central to the field of RL.
+This is called the \textbf{Reward Hypothesis} and is formulated below:
+\begin{quotation}
+    That all of what we mean by goals and purposes can be well thought of as maximization of the expected value of the cumulative sum of a received scalar signal (called reward). \textit{(from \cite{rlai}, Chapter 3.2)}
+\end{quotation}
+
+The \textbf{return} \(G_t\) is the \textbf{cumulative reward} obtained by the agent up until time step \(t\).
+This is what a reinforcement learning system is supposed to maximize.
+There are multiple mathematical models used to represent the return.
+In our calculations, we will use finite return with \textbf{discounting}:
+
+\begin{equation}
+    G_t = R_{t+1} + \gamma R_{t+2} + \dots = \sum_{k = 0}^{\infty}{\gamma^{k} R_{t + k + 1}}
+\end{equation}
+
+Discounting is, intuitively, a way to control how much the agent cares about future rewards.
+More on this topic can be found in either theoretical reference \cite{rlai, silver-lectures}.
+
+\label{rl:value-func}
+The \textbf{state-value function} for policy \(\pi\) is denoted by \(V^{\pi}(s)\) and measures how good each state is, with regard to the long-term potential of that state.
+Whereas rewards characterize the immediate value of a state, the value function measures its long-term desirability \cite{rlai}, under the given policy.
+The value of a state is two-fold:
+it is composed of \textbf{immediate reward} plus the \textbf{expected future return} of that state, i.e. the potential return obtained by going forward in time from that state, and following policy \(\pi\):
+
+\begin{equation}
+    V^{\pi}(s) = \mathbb{E}_{\pi}\{ G_t \given S_t = s \}
+\end{equation}
+
+Here, \(\mathbb{E}\) represents the expected value (of a random variable) and we denote by \(\mathbb{E}_{\pi}\) the expected value following policy \(\pi\).
+
+An \textbf{action-value function} \(Q^{\pi}(a, s)\) measures the value of a state-action pair and is also known as the Q-value function.
+In contrast to the state-value function, the action-value function can be used in unknown MDPs, as it does not depend on its structure.
+This is crucial for RL problems as MDPs are typically not known \emph{a priori}.
+
+\begin{equation}
+    Q^{\pi}(s, a) = \mathbb{E}_{\pi}\{ G_t \given S_t = s, A_t = a \}
+\end{equation}
+
+Value function approximation is the foundation of multiple solution methods in RL. A simple example can be seen in Monte-Carlo methods, where the value of a state \(s\) is approximated by averaging over multiple trajectories starting from \(s\).
+
+A \textbf{model} (of the environment) allows the agent to plan and make predictions of its environment.
+Some algorithms focus explicitly on learning a model and use it for \textbf{planning}.
+This approach is called \textbf{model-based}.
+In a model-based method, an agent can query the model to simulate what would happen with the environment before actually choosing an action.
+Approaches without a model are called \textbf{model-free}. Model-free agents are ``explicitly trial-and-error learners'' \cite{rlai}.
+
+\begin{figure}[ht]
+    \caption{A way of classifying RL methods based on whether they have a value function, policy or model. (Reproduced from David Silver's lectures. \cite{silver-lectures})}
+    \vspace*{0.2cm}
+    \centering
+    \includegraphics[width=0.5\textwidth]{silver-venn}
+\end{figure}
+
+\subsection{Dynamic Programming} \label{rl:dp}
+
+\subsection{Monte-Carlo Learning} \label{rl:mc}
+
+\subsection{Temporal-Difference Learning} \label{rl:td}
+TD is a class of solution methods in RL that is part of the model-free subset \cite{rlai}.
+An advantage of TD learning can learn from incomplete episodes \cite{long-peak-rl}.
+
+\subsection{Q-Learning} \label{rl:q-learning}
+Q-learning \cite{Watkins1992} appeared in 1992 and is considered one of the early breakthroughs of RL \cite{rlai}.
+It is a simple algorithm allowing an agent to learn an optimal policy in an unknown environment.

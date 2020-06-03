@@ -1,8 +1,12 @@
 \documentclass[12pt,twoside]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{datetime}
+\usepackage{amsmath,amssymb}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \setlength{\headheight}{15pt}
+
+% math commands
+\newcommand\given[1][]{\:#1\vert\:}
 
 % fancyhdr
 \usepackage{fancyhdr}
@@ -41,6 +45,13 @@
 \maketitle
 
 \chapter*{Abstract}
+In this paper, we use \textbf{reinforcement learning (RL)} methods to train an autonomous agent to behave optimally in a video game environment.
+We choose to solve \emph{Pacman}, for its simple mechanics but potentially complex situations that can emerge.
+In order to train our agent, we use a method similar to the one described in the Atari DQN paper \cite{atari-dqn}.
+We elaborate on the theoretical framework on which the paper is built.
+Finally, we describe our working implementation of the algorithm and document the results.
+
+\chapter*{Introduction}
 Over the relatively recent years, \textbf{reinforcement learning (RL)} has gained immense popularity.
 Stemming from the agent-based approach to artificial intelligence, RL is a unique paradigm within its field.
 
@@ -53,25 +64,18 @@ In \emph{Mnih et al.}'s 2013 \emph{Atari DQN} paper \cite{atari-dqn} (which is c
 
 Despite seeming a toy problem, learning to solve virtual environments from raw sensory input provides insight about real-time, real-world environments such as self-driving cars.
 
-In this paper, we similarly use RL methods to solve a game-like environment.
-We choose to solve \emph{Pacman}, for its simple mechanics but potentially complex situations that can emerge.
-In order to train our agent, we will use the DQN method, similar to the one described in the Atari DQN paper \cite{atari-dqn}.
-We elaborate on the theoretical framework of \emph{Q-learning} on which the paper is built.
-Finally, we document the resulting approach and construct an implementation.
-
 \tableofcontents
 
-% \chapter{Theoretical Background}
-% \input{chapters/theory}
+\chapter{Background}
+\input{chapters/background}
 
-\chapter{Intelligent Agents} \label{agents-intro}
-\input{chapters/intelligent_agents.tex}
+% \chapter{Intelligent Agents} \label{agents-intro}
+% \input{chapters/intelligent_agents.tex}
 
-\chapter{Elements of Reinforcement Learning} \label{reinforcement-learning}
-\input{chapters/rl.tex}
 
-\chapter{Deep Reinforcement Learning} \label{deep-reinforcement-learning}
-\input{chapters/deep-rl.tex}
+
+% \chapter{Deep Reinforcement Learning} \label{deep-reinforcement-learning}
+% \input{chapters/deep-rl.tex}
 
 \chapter{Our Approach}
 \input{chapters/approach}
