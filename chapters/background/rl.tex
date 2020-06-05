@@ -125,12 +125,12 @@ This transformation becomes clear if we use our return-based exprimation of valu
 \end{equation}
 
 Equation \ref{eqn:bellman-expectation} states the \textbf{Bellman expectation equation}.
-In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree, where each open circle represents a state, while closed cicles represent state-action pairs.
+In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree \footnote{Called a backup or update tree, it visualizes the way that state values are updated. This visualization convention is proposed in and used throughout \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
 
 In state $s$, the agent has a set of available actions according to its policy $\pi$.
-After the agent chooses action $a$, the environment responds with reward $r$ and throws the agent into $s'$ -- one of multiple possible states according to its dynamics.
+After the agent chooses action $a$, the environment responds with reward $r$ and throws the agent into the next state  $s'$ -- one of multiple possible states according to environment dynamics.
 
-Equation \ref{fig:expectation-backup} computes the value of state $s$ by \emph{averaging} over all possible trajectories, \emph{weighing} each by its probability of occuring (the same as the classic definition of $\mathbb{E}$ in statistics).
+Equation \ref{fig:expectation-backup} computes the value of state $s$ by \emph{averaging} over all possible trajectories, \emph{weighing} each by its probability of occuring.
 
 \begin{figure}[ht]
     \centering
@@ -152,7 +152,9 @@ In cases in which the MDP is \emph{known}, we can leverage the fact that we know
     \end{aligned}
 \end{equation}
 
-% todo: Now, quickly treat the Optimality case and skidaddle %
+There is another important relation, the \textbf{Bellman optimality equation}.
+In Chapter \ref{rl:dp} we use it to solve \emph{planning} problems, which require finding the \emph{optimal policy}.
+In short, the equation expresses the fact that the value of a state must be the value of the best possible action from that state \cite{rlai}.
 
 \subsection{Dynamic Programming} \label{rl:dp}
 \textbf{Dynamic programming (DP)} methods are an important theoretical starting point for reinforcement learning methods. DP problems require full knowledge of an MDP and use general methods to compute optimal solutions.
@@ -165,12 +167,32 @@ While being theoretically useful, there are key bottlenecks which prevent DP fro
     \item DP cannot be applied with \textbf{continuous} spaces, unless problems satisfy additional criteria \cite{rlai}.
 \end{enumerate}
 
-\subsubsection{DP Methods}
 There are two key problems that can be solved using DP in a fully known MDP using the Bellman equations.
 
-\textbf{Policy evaluation} starts with a given policy \(\pi\) and is concerned with finding its value function \(v_{\pi}\).
+\textbf{Policy evaluation}, also reffered to as \emph{prediction}, starts with a given policy $\pi$ and is concerned with finding its value function $v_{\pi}$.
+In theory, the value of each state can be computed by solving a system of Bellman equations, one for each state.
+However, the computation required is impractical for most problems.
+A more suitable method is \emph{iterative policy evaluation}, which uses equation \ref{eqn:bellman-expectation} iteratively, starting from an arbitraty value function $v_0$ and eventually converging to $v_{\pi}$.
 
-\textbf{Planning} is concerned with finding the optimal policy \(\pi^{\star}\).
+\textbf{Planning} is, in constrast, concerned with finding the optimal policy $\pi^{\star}$ starting from an arbitraty point in the space.
+
+In order to understand how $\pi^{\star}$ is the \textbf{optimal policy} we need to define an \textbf{ordering} between policies.
+Considering $\pi$ and $\pi'$, we say that $\pi' \geq \pi$ if $v_{\pi'}(s) \geq v_{\pi}(s)$ for every $s \in S$.
+According this ordering, we say that $\pi^{\star}$ is the optimal policy if its value function is greater than or equal to all other possible policies.
+
+Planning can be done using \emph{policy iteration}.
+At every iteration $k$, this method evaluates the given policy $\pi$ to find its value function $v_{\pi}$ (solving the above problem).
+Then, it constructs a new policy $\pi'$ which acts \emph{greedily} with regard to $v_{\pi}$.
+This is proven to eventually converge to $\pi^*$ as $k \to \infty$ \cite{rlai}.
+
+\begin{figure}[h]
+    \caption{An illustration of policy iteration. (From David Silver's lectures. \cite{silver-lectures})}
+    \centering
+    \includegraphics[width=0.4\textwidth]{silver-policy-iteration}
+\end{figure}
+
+Using policy iteration can be extremely expensive, as the method adds an additional layer of computation on top of already costly policy evalutation.
+The idea of \textbf{value iteration} comes from collapsing the evaluation step with the policy construction step, by applying ``one sweep'' policy iteration -- only updating each value once at every step.
 
 \subsection{Monte-Carlo Learning} \label{rl:mc}
 
