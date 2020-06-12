@@ -93,9 +93,14 @@ More explicitly, it gives the expected return of starting in state $s$ and takin
     Q^{\pi}(s, a) = \mathbb{E}_{\pi}\{ G_t \given S_t = s, A_t = a \}
 \end{equation}
 
-The usefulness of action-value functions comes from the fact that they can be used in MDPs whose exact structure is unknown.
-This is crucial for solving RL problems as MDPs are typically unknown.
-In contrast, evaluating the value function in state $s$ is conditional on knowing the probability distribution over all successor states $s'$.
+Action-value functions are especially important in \textbf{model-free methods} (see \emph{Models} in Section \ref{rl:model}), which are predominantly the focus of this paper.
+In model-based algorithms, the value function $v$ can uniquely determine a policy: we can simply pick the best reward-state pair.
+This naturally requires knowing the full dynamics of the MDP (knowing all successor states of $s$).
+
+However, for many tasks, especially those relevant in the real-world, it is (at least) impractical to know or to model the environment.
+In contrast, keeping track of both states \emph{and} actions allows model-free learning algorithms to construct policies without knowledge of environment dynamics.
+
+\subsubsection{Optimal Value Functions}
 
 There are optimal variants of the same value functions.
 In order to understand the concept of \textbf{optimality}, we need to define an \textbf{ordering} between policies.
@@ -114,9 +119,10 @@ Similarly, \textbf{optimal action-value function $Q^*(s, a)$} is the maximum val
     Q^*(s) = \max_{\pi}{Q^{\pi}(s, a)}
 \end{equation}
 
-Value function approximation is the foundation of multiple solution methods in RL. A simple example can be seen in Monte-Carlo methods, where the value of a state \(s\) is approximated by averaging over multiple trajectories starting from \(s\).
+Value function approximation is the foundation of multiple solution methods in RL.
+A simple example can be seen in Monte Carlo methods, where the value of a state \(s\) is approximated by averaging over multiple trajectories starting from \(s\).
 
-\subsubsection{Models}
+\subsubsection{Models} \label{rl:model}
 A \textbf{model} (of the environment) allows the agent to plan and make predictions of its environment.
 Some algorithms focus explicitly on learning a model and use it for \textbf{planning}.
 This approach is called \textbf{model-based}.
@@ -146,7 +152,6 @@ This transformation becomes clear if we use our return-based exprimation of valu
         &= \mathbb{E}_{\pi}\{ R_{t+1} + \gamma V^{\pi}(S_{t+1}) \given S_{t} = s \} \\
 \end{aligned}
 \end{equation}
-
 
 In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree\footnote{Called a backup or update tree, it visualizes the way that state values are updated. This visualization convention is proposed in and used throughout \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
 
@@ -222,6 +227,7 @@ Using policy iteration can be extremely expensive, as the method adds an additio
 The idea of \textbf{value iteration} comes from collapsing the evaluation step with the policy construction step, by applying ``one sweep'' policy iteration -- only updating each value once at every step.
 
 \subsection{Monte-Carlo Learning} \label{rl:mc}
+
 
 \subsection{Temporal-Difference Learning} \label{rl:td}
 TD is a class of solution methods in RL that is part of the model-free subset \cite{rlai}.
