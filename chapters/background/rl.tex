@@ -72,7 +72,9 @@ In equation \ref{eqn:return}, we use an infinite-horizon sum with discounting.
 Discounting is, intuitively, a way to control how much the agent cares about future rewards.
 More on this topic can be found in either theoretical reference \cite{rlai, silver-lectures}.
 
-\label{rl:value-func}
+% todo: explain why discounting is used and why it is convenient
+
+\subsubsection{Value Functions} \label{rl:value-func}
 The \textbf{state-value function} for policy \(\pi\) is denoted by \(V^{\pi}(s)\) and measures how good each state is, with regard to the long-term potential of that state.
 Whereas rewards characterize the immediate value of a state, the value function measures its long-term desirability \cite{rlai}, under the given policy.
 
@@ -80,18 +82,41 @@ Whereas rewards characterize the immediate value of a state, the value function 
     V^{\pi}(s) = \mathbb{E}_{\pi}\{ G_t \given S_t = s \}
 \end{equation}
 
-Here, \(\mathbb{E}\) represents the expected value (of a random variable) and we denote by \(\mathbb{E}_{\pi}\) the expected value following policy \(\pi\).
+In Equation \ref{eqn:value}, \(\mathbb{E}\) represents the expected value of a random variable. Here we are interested in the expected value of the return, or simply -- the \emph{expected return}.
+By \(\mathbb{E}_{\pi}\) we denote the expected value conditional on following policy \(\pi\).
+We will maintain this notation in the expressions below.
 
-An \textbf{action-value function} \(Q^{\pi}(a, s)\) measures the value of a state-action pair and is also known as the Q-value function.
-In contrast to the state-value function, the action-value function can be used in unknown MDPs, as it does not depend on its structure.
-This is crucial for RL problems as MDPs are typically not known \emph{a priori}.
+The \textbf{action-value function} \(Q^{\pi}(s, a)\), also known as the Q-value function, measures the desirability of a state-action pair.
+More explicitly, it gives the expected return of starting in state $s$ and taking action $a$, then continuing to follow policy $\pi$.
 
 \begin{equation}
     Q^{\pi}(s, a) = \mathbb{E}_{\pi}\{ G_t \given S_t = s, A_t = a \}
 \end{equation}
 
+The usefulness of action-value functions comes from the fact that they can be used in MDPs whose exact structure is unknown.
+This is crucial for solving RL problems as MDPs are typically unknown.
+In contrast, evaluating the value function in state $s$ is conditional on knowing the probability distribution over all successor states $s'$.
+
+There are optimal variants of the same value functions.
+In order to understand the concept of \textbf{optimality}, we need to define an \textbf{ordering} between policies.
+Considering $\pi$ and $\pi'$, we say that $\pi' \geq \pi$ if $V^{\pi'}(s) \geq V^{\pi}(s)$ for every $s \in S$.
+Using this definition, we can say that there exists a $\pi^{\star}$ which is the \textbf{optimal policy}, being greater than or equal to all other possible policies.
+
+The \textbf{optimal value function $V^*(s)$} represents the maximum value obtained in state $s$, over all policies, as briefly summed up the relation below.
+
+\begin{equation} \label{eqn:opt-value-fun}
+    V^*(s) = \max_{\pi}{V^{\pi}(s)}
+\end{equation}
+
+Similarly, \textbf{optimal action-value function $Q^*(s, a)$} is the maximum value of being in state $s$ and taking action $a$, considered over all policies.
+
+\begin{equation} \label{eqn:opt-Q-fun}
+    Q^*(s) = \max_{\pi}{Q^{\pi}(s, a)}
+\end{equation}
+
 Value function approximation is the foundation of multiple solution methods in RL. A simple example can be seen in Monte-Carlo methods, where the value of a state \(s\) is approximated by averaging over multiple trajectories starting from \(s\).
 
+\subsubsection{Models}
 A \textbf{model} (of the environment) allows the agent to plan and make predictions of its environment.
 Some algorithms focus explicitly on learning a model and use it for \textbf{planning}.
 This approach is called \textbf{model-based}.
@@ -107,12 +132,10 @@ Approaches without a model are called \textbf{model-free}. Model-free agents are
 
 \subsection{Bellman Equations} \label{rl:bellman}
 The \textbf{Bellman equations} are a set of relations conceived by Richard Bellman in the 1950s, in the context of solving optimal control using dynamic programming.
-The key idea behind the Bellman equations is that they express the value of a state $v(S_{t})$ as \emph{expected sum} of:
-\begin{enumerate}
-    \item immediate reward of being in that state: $R_{t+1}$.
-    \item discounted value of successor state: $\gamma v(S_{t+1})$.
-\end{enumerate}
+In the reinforcement learning context, they interrelate the state-value and action-value functions and provide the basis of solving an MDP whether known or unknown.
 
+Equation \ref{eqn:bellman-expectation} states the \textbf{Bellman expectation equation}.
+The key idea behind this class of Bellman equations is that they express the value of a state as expected sum of immediate reward of being in that state,  plus discounted value of successor state.
 This transformation becomes clear if we use our return-based exprimation of value function $V^{\pi}(s)$ in Equation \ref{eqn:value} and reorganize its terms:
 
 \begin{equation} \label{eqn:bellman-expectation}
@@ -124,8 +147,8 @@ This transformation becomes clear if we use our return-based exprimation of valu
 \end{aligned}
 \end{equation}
 
-Equation \ref{eqn:bellman-expectation} states the \textbf{Bellman expectation equation}.
-In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree \footnote{Called a backup or update tree, it visualizes the way that state values are updated. This visualization convention is proposed in and used throughout \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
+
+In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree\footnote{Called a backup or update tree, it visualizes the way that state values are updated. This visualization convention is proposed in and used throughout \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
 
 In state $s$, the agent has a set of available actions according to its policy $\pi$.
 After the agent chooses action $a$, the environment responds with reward $r$ and throws the agent into the next state  $s'$ -- one of multiple possible states according to environment dynamics.
@@ -152,9 +175,17 @@ In cases in which the MDP is \emph{known}, we can leverage the fact that we know
     \end{aligned}
 \end{equation}
 
-There is another important relation, the \textbf{Bellman optimality equation}.
-In Chapter \ref{rl:dp} we use it to solve \emph{planning} problems, which require finding the \emph{optimal policy}.
-In short, the equation expresses the fact that the value of a state must be the value of the best possible action from that state \cite{rlai}.
+There exists another important relation with important applications in RL -- the \textbf{Bellman optimality equation}.
+One way of expressing the optimality equation, provided in \ref{eqn:bellman-optimality}, simply states the fact that the optimal value of a state must be the value of the best possible action from that state \cite{rlai}.
+This is an example of interdependence of the two value functions, although it is important to mention that we can express $q_{*}$ in terms of itself as well.
+
+\begin{equation} \label{eqn:bellman-optimality}
+    \begin{aligned}
+        v_*(s) = \max_{a \in A} q_{*}(s, a)
+    \end{aligned}
+\end{equation}
+
+The optimality equation is non-linear, but we cover approximating solutions using iterative methods in our dynamic programming section at \ref{rl:dp}, specifically to solve planning problems (which require finding the optimal policy).
 
 \subsection{Dynamic Programming} \label{rl:dp}
 \textbf{Dynamic programming (DP)} methods are an important theoretical starting point for reinforcement learning methods. DP problems require full knowledge of an MDP and use general methods to compute optimal solutions.
@@ -175,10 +206,6 @@ However, the computation required is impractical for most problems.
 A more suitable method is \emph{iterative policy evaluation}, which uses equation \ref{eqn:bellman-expectation} iteratively, starting from an arbitraty value function $v_0$ and eventually converging to $v_{\pi}$.
 
 \textbf{Planning} is, in constrast, concerned with finding the optimal policy $\pi^{\star}$ starting from an arbitraty point in the space.
-
-In order to understand how $\pi^{\star}$ is the \textbf{optimal policy} we need to define an \textbf{ordering} between policies.
-Considering $\pi$ and $\pi'$, we say that $\pi' \geq \pi$ if $v_{\pi'}(s) \geq v_{\pi}(s)$ for every $s \in S$.
-According this ordering, we say that $\pi^{\star}$ is the optimal policy if its value function is greater than or equal to all other possible policies.
 
 Planning can be done using \emph{policy iteration}.
 At every iteration $k$, this method evaluates the given policy $\pi$ to find its value function $v_{\pi}$ (solving the above problem).
@@ -203,3 +230,5 @@ An advantage of TD learning can learn from incomplete episodes \cite{long-peak-r
 \subsection{Q-Learning} \label{rl:q-learning}
 Q-learning \cite{Watkins1992} appeared in 1992 and is considered one of the early breakthroughs of RL \cite{rlai}.
 It is a simple algorithm allowing an agent to learn an optimal policy in an unknown environment.
+
+\subsection{Functional Approximators}
