@@ -174,7 +174,7 @@ In cases in which the MDP is \emph{known}, we can leverage the fact that we know
             &= \mathbb{E}_{\pi}\{ R_{t+1} + \gamma V^{\pi}(S_{t+1}) \given S_{t} = s \} \\
             &= \sum_{a \in A}{
                 \pi(a \given s) ( R(s, a) + \gamma \sum_{s' \in S}{
-                    P_a(s, s') V_{\pi}(s')
+                    P_a(s, s') V^{\pi}(s')
                 })
             }
     \end{aligned}
@@ -226,8 +226,58 @@ This is proven to eventually converge to $\pi^*$ as $k \to \infty$ \cite{rlai}.
 Using policy iteration can be extremely expensive, as the method adds an additional layer of computation on top of already costly policy evalutation.
 The idea of \textbf{value iteration} comes from collapsing the evaluation step with the policy construction step, by applying ``one sweep'' policy iteration -- only updating each value once at every step.
 
-\subsection{Monte-Carlo Learning} \label{rl:mc}
+\subsection{Monte Carlo Learning} \label{rl:mc}
+In reinforcement learning, Monte Carlo is a family of methods that learn from complete episodes of experience by sampling average returns.
+The term “Monte Carlo” is broadly used in mathematics to mean any evaluation methods that involves a significant random component \cite{rlai}.
 
+\begin{figure}[ht]
+    \caption{Backup tree for Monte Carlo, emphasizing a sample episode starting. (From David Silver's lectures. \cite{silver-lectures})}
+    \centering
+    \includegraphics[width=0.5\textwidth]{montecarlo-backup.png}
+\end{figure}
+
+To elaborate, Monte Carlo approximates the expected return of any given state, by averaging over a the set of episodic returns for that state.
+There are two variants: \emph{first-visit} and \emph{every-visit} Monte Carlo.
+
+To achieve this, we interact with the environment over multiple episodes, with the condition that any episode \emph{eventually terminates}, independently of the actions taken by the agent.
+Eventual termination is necessary for all returns to be well-defined.
+In this way, we can directly compute the return (per episode) for each state in the set of visited states.
+$v(s)$ is then approximated as the mean of the obtained returns.
+
+Given the law of large numbers, $v(s)$ will eventually converge to the correct values as the number of episodes approaches infinity.
+
+\subsubsection{Exploration and Soft policies}
+Besides the termination requirement, Monte Carlo will not converge to any useful solution unless efficient \textbf{exploration} of the state space is guaranteed.
+For this purpose, we introduce the notion of a \textbf{soft policy}.
+
+Soft policies guarantee that we do not permanently exclude any state from our search, or -- in other words -- that $\pi (s, a) > 0$ for all $s \in S$ and $a \in A$.
+For example, $\varepsilon$-greedy policies are commonly used to represent soft policies.
+Under an $\varepsilon$-greedy policy, $\varepsilon \in (0, 1]$ is the probability of choosing a random action in any state instead of acting greedily.
+
+\subsubsection{Monte-Carlo Control}
+Monte Carlo addresses the \textbf{complete} reinforcement learning problem, as it only requires episodes of experience to learn the optimal solution, in contrast to DP, which requires a fully known model of the environment.
+
+Thus far, we presented Monte Carlo as a viable strategy for policy evaluation in unknown environments.
+This solves the problem of \emph{model-free prediction}.
+In order to apply this for \textbf{control} problems, we use the General Policy Iteration (GPI) framework, drawing upon what we discussed in Section \ref{rl:dp}, \emph{Dynamic Programming}.
+
+To review, policy iteration consists of two simultaneous, interacting processes \cite{rlai}: \emph{policy evaluation}, which approximates the value function of a given policy, and \emph{policy improvement}, which constructs a better policy by acting greedily with regard to the value function.
+
+\textbf{Generalized Policy Iteration (GPI)} is a broad framework specifying only that policy evaluation is used in conjunction with policy iteration in some way.
+Most reinforcement learning algorithms fit into this framework.
+
+\begin{figure}[h]
+    \includegraphics[width=5cm]{montecarlo-gpi.png}
+    \centering
+    \caption{Monte Carlo control using the GPI framework. (From \cite{rlai})}
+\end{figure}
+
+Applying this pattern, we can use Monte Carlo estimation as the \emph{prediction} step to approximate the optimal policy, thus solving \emph{control}.
+Using action-value functions (which are required in unknown environments, as mentioned in our section on value functions), the policy improvement step is simply done by choosing the action yielding the maximum value.
+
+\begin{equation}
+    \pi(s) = \argmax_{a \in A}{Q(s, a)}
+\end{equation}
 
 \subsection{Temporal-Difference Learning} \label{rl:td}
 TD is a class of solution methods in RL that is part of the model-free subset \cite{rlai}.
