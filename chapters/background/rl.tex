@@ -288,8 +288,45 @@ Soft policies guarantee that we do not permanently exclude any state from our se
 Under an $\varepsilon$-greedy policy, $\varepsilon \in (0, 1]$ is the probability of choosing a random action in any state instead of acting greedily.
 
 \subsection{Temporal-Difference Learning} \label{rl:td}
-TD is a class of solution methods in RL that is part of the model-free subset \cite{rlai}.
-An advantage of TD learning can learn from incomplete episodes \cite{long-peak-rl}.
+\textbf{Temporal-difference (TD) learning} is a class of model-free algorithms that are able to learn from incomplete episodes.
+Compared to Monte Carlo, TD methods (being model-free) similarly learn by sampling from the environment, but differ through the fact that they do not require complete episodes of experience.
+
+There exist advanced generalizations of the simple TD algorithm, such as TD($\lambda$), but they are outside the scope of this paper.
+Here we will only cover the case of one-step TD learning, known in \cite{rlai} as TD(0).
+
+\subsubsection{Bootstrapping}
+Similar to the dynamic programming approach, TD updates the value function based on previous estimations of itself.
+This is called \textbf{bootstrapping} and can be intuitively described as the idea of \emph{learning a guess from a guess} \cite{rlai}.
+\begin{figure}[h]
+    \includegraphics[width=0.7\textwidth]{td-mc-backups.png}
+    \centering
+    \caption{Backup tree for one step of TD(0) next to one step of every-visit Monte Carlo.}
+\end{figure}
+
+The concept can be generalized to $n$-step bootstrapping (updating after $n$ steps instead of one).
+
+\subsubsection{TD Prediction}
+Temporal-difference solves the same prediction problem as Monte Carlo.
+In this section we contrast the two approaches and establish the definition of the TD target and the TD error.
+
+We consider a Monte Carlo approach where we update $V^{\pi}(s)$ towards the return $G_t$ softly at the end of each episode, considering a learning rate of $\alpha \in (0, 1)$.
+This Monte Carlo backup operation is given by Equation \ref{eqn:td-mc} \cite{rlai}.
+
+\begin{equation} \label{eqn:td-mc}
+    V(S_t) \leftarrow  V(S_t) + \alpha[G_t - V(S_t)]
+\end{equation}
+
+Observe how in Monte Carlo, we know the return $G_t$ exactly and so we have a ground truth.
+
+\begin{equation} \label{eqn:td-td}
+    V(S_t) \leftarrow  V(S_t) + \alpha[
+        \overbrace{\underbrace{R_{t+1} + \gamma V(S_{t+1})}_\text{TD target} - V(S_t)}^\text{TD error}
+    ]
+\end{equation}
+
+Equation \ref{eqn:td-td} describes the update step in temporal-difference learning.
+We define the \textbf{TD target} according to the Bellman expectation equation -- $\delta = R_{t+1} + \gamma V(S_{t+1})$.
+After each step of experience, the current value is adjusted softly towards the \textbf{TD error} which is simply $\delta - V(S_t)$.
 
 \subsection{Q-Learning} \label{rl:q-learning}
 Q-learning \cite{Watkins1992} appeared in 1992 and is considered one of the early breakthroughs of RL \cite{rlai}.
