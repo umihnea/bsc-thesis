@@ -97,15 +97,15 @@ Action-value functions are especially important in \textbf{model-free methods} (
 In model-based algorithms, the value function $v$ can uniquely determine a policy: we can simply pick the best reward-state pair.
 This naturally requires knowing the full dynamics of the MDP (knowing all successor states of $s$).
 
-However, for many tasks, especially those relevant in the real-world, it is (at least) impractical to know or to model the environment.
-In contrast, keeping track of both states \emph{and} actions allows model-free learning algorithms to construct policies without knowledge of environment dynamics.
+However, for many tasks, especially those relevant in the real-world, it is impractical (if not impossible) to know or to model the environment.
+Keeping track of both \emph{states and actions} allows model-free learning algorithms to construct policies without knowledge of environment dynamics.
 
 \subsubsection{Optimal Value Functions}
 
 There are optimal variants of the same value functions.
 In order to understand the concept of \textbf{optimality}, we need to define an \textbf{ordering} between policies.
 Considering $\pi$ and $\pi'$, we say that $\pi' \geq \pi$ if $V^{\pi'}(s) \geq V^{\pi}(s)$ for every $s \in S$.
-Using this definition, we can say that there exists a $\pi^{\star}$ which is the \textbf{optimal policy}, being greater than or equal to all other possible policies.
+Using this definition, we can say that there exists a $\pi^{*}$ which is the \textbf{optimal policy}, being greater than or equal to all other possible policies.
 
 The \textbf{optimal value function $V^*(s)$} represents the maximum value obtained in state $s$, over all policies, as briefly summed up the relation below.
 
@@ -180,7 +180,7 @@ In cases in which the MDP is \emph{known}, we can leverage the fact that we know
     \end{aligned}
 \end{equation}
 
-There exists another important relation with important applications in RL -- the \textbf{Bellman optimality equation}.
+There exists another relation with important applications in RL -- the \textbf{Bellman optimality equation}.
 One way of expressing the optimality equation, provided in \ref{eqn:bellman-optimality}, simply states the fact that the optimal value of a state must be the value of the best possible action from that state \cite{rlai}.
 This is an example of interdependence of the two value functions, although it is important to mention that we can express $q_{*}$ in terms of itself as well.
 
@@ -210,7 +210,7 @@ In theory, the value of each state can be computed by solving a system of Bellma
 However, the computation required is impractical for most problems.
 A more suitable method is \emph{iterative policy evaluation}, which uses equation \ref{eqn:bellman-expectation} iteratively, starting from an arbitraty value function $v_0$ and eventually converging to $v_{\pi}$.
 
-\textbf{Planning} is, in constrast, concerned with finding the optimal policy $\pi^{\star}$ starting from an arbitraty point in the space.
+\textbf{Planning} is, in constrast, concerned with finding the optimal policy $\pi^{*}$ starting from an arbitraty point in the space.
 
 Planning can be done using \emph{policy iteration}.
 At every iteration $k$, this method evaluates the given policy $\pi$ to find its value function $v_{\pi}$ (solving the above problem).
@@ -226,45 +226,44 @@ This is proven to eventually converge to $\pi^*$ as $k \to \infty$ \cite{rlai}.
 Using policy iteration can be extremely expensive, as the method adds an additional layer of computation on top of already costly policy evalutation.
 The idea of \textbf{value iteration} comes from collapsing the evaluation step with the policy construction step, by applying ``one sweep'' policy iteration -- only updating each value once at every step.
 
+\subsubsection{Generalized Policy Iteration (GPI)}
+As we have seen so far, policy iteration consists of two simultaneous, interacting processes \cite{rlai}: policy evaluation and policy improvement.
+Different algorithms interrelate the two phases in different ways, e.g. value iteration performs one sweep of policy evaluation while vanilla policy iteration goes through to the end.
+
+\textbf{Generalized policy iteration} is a broad framework specifying only that policy evaluation and policy iteration are used alongside each other, abstracting the exact details necessary for an algorithm.
+Most reinforcement learning algorithms can be described by GPI at the high-level.
+
+\clearpage
+
 \subsection{Monte Carlo Learning} \label{rl:mc}
 In reinforcement learning, Monte Carlo is a family of methods that learn from complete episodes of experience by sampling average returns.
 The term “Monte Carlo” is broadly used in mathematics to mean any evaluation methods that involves a significant random component \cite{rlai}.
 
 \begin{figure}[ht]
-    \caption{Backup tree for Monte Carlo, emphasizing a sample episode starting. (From David Silver's lectures. \cite{silver-lectures})}
+    \caption{Backup tree for Monte Carlo, highlighting a sample episode up to its terminal state. (From David Silver's lectures. \cite{silver-lectures})}
     \centering
     \includegraphics[width=0.5\textwidth]{montecarlo-backup.png}
 \end{figure}
 
-To elaborate, Monte Carlo approximates the expected return of any given state, by averaging over a the set of episodic returns for that state.
+To elaborate, Monte Carlo approximates the expected return of any given state, by averaging over the set of episodic returns for that state.
 There are two variants: \emph{first-visit} and \emph{every-visit} Monte Carlo.
+The distinction between the methods is the way that we handle loops in an episode.
 
 To achieve this, we interact with the environment over multiple episodes, with the condition that any episode \emph{eventually terminates}, independently of the actions taken by the agent.
 Eventual termination is necessary for all returns to be well-defined.
-In this way, we can directly compute the return (per episode) for each state in the set of visited states.
-$v(s)$ is then approximated as the mean of the obtained returns.
 
+We describe a simplified algorithm to better illustrate the approach.
+Each state must hold a variable $count(s)$, the number of first-visits (or every-visits) over the set of all sampled episodes, as well as a $sum(s)$ -- the sum of returns over this set of samples.
+
+The value of a state $v(s)$ can then be approximated as the mean over all obtained returns, $sum(s) / count(s)$.
 Given the law of large numbers, $v(s)$ will eventually converge to the correct values as the number of episodes approaches infinity.
 
-\subsubsection{Exploration and Soft policies}
-Besides the termination requirement, Monte Carlo will not converge to any useful solution unless efficient \textbf{exploration} of the state space is guaranteed.
-For this purpose, we introduce the notion of a \textbf{soft policy}.
-
-Soft policies guarantee that we do not permanently exclude any state from our search, or -- in other words -- that $\pi (s, a) > 0$ for all $s \in S$ and $a \in A$.
-For example, $\varepsilon$-greedy policies are commonly used to represent soft policies.
-Under an $\varepsilon$-greedy policy, $\varepsilon \in (0, 1]$ is the probability of choosing a random action in any state instead of acting greedily.
-
-\subsubsection{Monte-Carlo Control}
+\subsubsection{Monte Carlo Control}
 Monte Carlo addresses the \textbf{complete} reinforcement learning problem, as it only requires episodes of experience to learn the optimal solution, in contrast to DP, which requires a fully known model of the environment.
 
 Thus far, we presented Monte Carlo as a viable strategy for policy evaluation in unknown environments.
 This solves the problem of \emph{model-free prediction}.
 In order to apply this for \textbf{control} problems, we use the General Policy Iteration (GPI) framework, drawing upon what we discussed in Section \ref{rl:dp}, \emph{Dynamic Programming}.
-
-To review, policy iteration consists of two simultaneous, interacting processes \cite{rlai}: \emph{policy evaluation}, which approximates the value function of a given policy, and \emph{policy improvement}, which constructs a better policy by acting greedily with regard to the value function.
-
-\textbf{Generalized Policy Iteration (GPI)} is a broad framework specifying only that policy evaluation is used in conjunction with policy iteration in some way.
-Most reinforcement learning algorithms fit into this framework.
 
 \begin{figure}[h]
     \includegraphics[width=5cm]{montecarlo-gpi.png}
@@ -272,12 +271,21 @@ Most reinforcement learning algorithms fit into this framework.
     \caption{Monte Carlo control using the GPI framework. (From \cite{rlai})}
 \end{figure}
 
-Applying this pattern, we can use Monte Carlo estimation as the \emph{prediction} step to approximate the optimal policy, thus solving \emph{control}.
+Applying this pattern, we can use Monte Carlo estimation as the \emph{prediction} step to approximate the optimal policy, thus obtraining Monte Carlo \emph{control}.
 Using action-value functions (which are required in unknown environments, as mentioned in our section on value functions), the policy improvement step is simply done by choosing the action yielding the maximum value.
 
 \begin{equation}
     \pi(s) = \argmax_{a \in A}{Q(s, a)}
 \end{equation}
+
+\subsubsection{Exploration and Soft Policies}
+
+Besides the termination requirement, Monte Carlo control will not converge to any useful solution unless efficient \textbf{exploration} of the state space is guaranteed.
+For this purpose, we introduce the notion of a \textbf{soft policy}.
+
+Soft policies guarantee that we do not permanently exclude any state from our search, or -- in other words -- that $\pi (s, a) > 0$ for all $s \in S$ and $a \in A$.
+\textbf{$\varepsilon$-greedy policies} are commonly used for this purpose.
+Under an $\varepsilon$-greedy policy, $\varepsilon \in (0, 1]$ is the probability of choosing a random action in any state instead of acting greedily.
 
 \subsection{Temporal-Difference Learning} \label{rl:td}
 TD is a class of solution methods in RL that is part of the model-free subset \cite{rlai}.
