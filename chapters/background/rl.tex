@@ -316,7 +316,8 @@ This Monte Carlo backup operation is given by Equation \ref{eqn:td-mc} \cite{rla
     V(S_t) \leftarrow  V(S_t) + \alpha[G_t - V(S_t)]
 \end{equation}
 
-Observe how in Monte Carlo, we know the return $G_t$ exactly and so we have a ground truth.
+Observe how in Monte Carlo, we update at the end of an episode and so we know the return $G_t$ exactly -- this is our \emph{ground truth}.
+In TD, the rewards themselves provide a stable ground, but the values are adjusted towards our \emph{best guess} (the value from our previous iteration).
 
 \begin{equation} \label{eqn:td-td}
     V(S_t) \leftarrow  V(S_t) + \alpha[
