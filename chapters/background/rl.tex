@@ -329,8 +329,28 @@ Equation \ref{eqn:td-td} describes the update step in temporal-difference learni
 We define the \textbf{TD target} according to the Bellman expectation equation -- $\delta = R_{t+1} + \gamma V(S_{t+1})$.
 After each step of experience, the current value is adjusted softly towards the \textbf{TD error} which is simply $\delta - V(S_t)$.
 
+\subsubsection{TD Control}
+TD control, like Monte Carlo control, uses GPI with TD as the prediction step.
+Control algorithms are split into two distinct classes: on-policy and off-policy algorithms.
+We explain the difference between the two, then focus on the off-policy TD case (Q-learning, in Section \ref{rl:q-learning}).
+
+\subsubsection{On-Policy and Off-Policy Control}
+In control algorithms, we can distinguish two different types of policies.
+\begin{enumerate}
+    \item The \textbf{target policy} is the policy which the algorithm tries to predict (estimate) -- this has been the type that we have mostly explained so far.
+    All RL algorithms optimize a target policy.
+    \item The \textbf{behaviour policy} (sometimes denoted by $\mu$) is the policy effectively followed by the agent, i.e. it is directly used to choose actions in the environment.
+\end{enumerate}
+
+The class of algorithms which uses a behaviour policy $\mu$ in order to learn about a target policy $\pi$ is called \textbf{off-policy}.
+Off-policy agents try to learn optimal behaviour by observation of exploratory behaviour.
+In \textbf{on-policy} learning, the learned policy is the same as the behaviour policy.
+On-policy learning agents learn ``on the job'' \cite{silver-lectures}, i.e. estimate a policy by acting according to that policy.
+
+% todo: mention some advantages of off-policy learning
+
+TD learning contains strategies aligning with both categories: Sarsa is an on-policy TD control algorithm, while Q-learning is its off-policy counterpart.
+
 \subsection{Q-Learning} \label{rl:q-learning}
 Q-learning \cite{Watkins1992} appeared in 1992 and is considered one of the early breakthroughs of RL \cite{rlai}.
 It is a simple algorithm allowing an agent to learn an optimal policy in an unknown environment.
-
-\subsection{Functional Approximators}
