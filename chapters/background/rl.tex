@@ -230,7 +230,7 @@ The idea of \textbf{value iteration} comes from collapsing the evaluation step w
 As we have seen so far, policy iteration consists of two simultaneous, interacting processes \cite{rlai}: policy evaluation and policy improvement.
 Different algorithms interrelate the two phases in different ways, e.g. value iteration performs one sweep of policy evaluation while vanilla policy iteration goes through to the end.
 
-\textbf{Generalized policy iteration} is a broad framework specifying only that policy evaluation and policy iteration are used alongside each other, abstracting the exact details necessary for an algorithm.
+\textbf{Generalized policy iteration} is a broad framework specifying only that policy evaluation and policy iteration are used alongside each other, abstracting the exact details of their interaction.
 Most reinforcement learning algorithms can be described by GPI at the high-level.
 
 \clearpage
@@ -245,14 +245,12 @@ The term “Monte Carlo” is broadly used in mathematics to mean any evaluation
     \includegraphics[width=0.5\textwidth]{montecarlo-backup.png}
 \end{figure}
 
-To elaborate, Monte Carlo approximates the expected return of any given state, by averaging over the set of episodic returns for that state.
-There are two variants: \emph{first-visit} and \emph{every-visit} Monte Carlo.
-The distinction between the methods is the way that we handle loops in an episode.
-
-To achieve this, we interact with the environment over multiple episodes, with the condition that any episode \emph{eventually terminates}, independently of the actions taken by the agent.
+Monte Carlo approximates the expected return of any given state by averaging over the set of \emph{episodic returns} for that state.
+For this, we interact with the environment over multiple episodes, with the condition that every episode \emph{eventually terminates}, independently of the actions taken by the agent.
 Eventual termination is necessary for all returns to be well-defined.
 
-We describe a simplified algorithm to better illustrate the approach.
+Monte Carlo introduces one of the missing pieces required to solve model-free problems -- \textbf{sampling}.
+Below, we describe a simplified, general version of the algorithm to better illustrate the approach.
 Each state must hold a variable $count(s)$, the number of first-visits (or every-visits) over the set of all sampled episodes, as well as a $sum(s)$ -- the sum of returns over this set of samples.
 
 The value of a state $v(s)$ can then be approximated as the mean over all obtained returns, $sum(s) / count(s)$.
@@ -261,8 +259,7 @@ Given the law of large numbers, $v(s)$ will eventually converge to the correct v
 \subsubsection{Monte Carlo Control}
 Monte Carlo addresses the \textbf{complete} reinforcement learning problem, as it only requires episodes of experience to learn the optimal solution, in contrast to DP, which requires a fully known model of the environment.
 
-Thus far, we presented Monte Carlo as a viable strategy for policy evaluation in unknown environments.
-This solves the problem of \emph{model-free prediction}.
+Thus far, we presented Monte Carlo as a viable strategy for policy evaluation in unknown environments (\emph{model-free prediction}).
 In order to apply this for \textbf{control} problems, we use the General Policy Iteration (GPI) framework, drawing upon what we discussed in Section \ref{rl:dp}, \emph{Dynamic Programming}.
 
 \begin{figure}[h]
@@ -297,16 +294,20 @@ Here we will only cover the case of one-step TD learning, known in \cite{rlai} a
 \subsubsection{Bootstrapping}
 Similar to the dynamic programming approach, TD updates the value function based on previous estimations of itself.
 This is called \textbf{bootstrapping} and can be intuitively described as the idea of \emph{learning a guess from a guess} \cite{rlai}.
+
 \begin{figure}[h]
     \includegraphics[width=0.7\textwidth]{td-mc-backups.png}
     \centering
-    \caption{Backup tree for one step of TD(0) next to one step of every-visit Monte Carlo.}
+    \caption[Caption]{Backup tree for one update step of TD(0) next to one update step of every-visit Monte Carlo.} \label{fig:td-mc-update-steps}
 \end{figure}
+
+In Figure \ref{fig:td-mc-update-steps}, an \emph{update step} is not a time-step but instead refers to an iteration of each algortihm.
+In the case of TD(0), the terms do correspond, as the update can be performed after each time-step.
+For Monte Carlo, the update is run only after the end of each episode.
 
 The concept can be generalized to $n$-step bootstrapping (updating after $n$ steps instead of one).
 
-\subsubsection{TD Prediction}
-Temporal-difference solves the same prediction problem as Monte Carlo.
+Temporal-difference solves the same \textbf{prediction} problem as Monte Carlo.
 In this section we contrast the two approaches and establish the definition of the TD target and the TD error.
 
 We consider a Monte Carlo approach where we update $V^{\pi}(s)$ towards the return $G_t$ softly at the end of each episode, considering a learning rate of $\alpha \in (0, 1)$.
@@ -329,28 +330,25 @@ Equation \ref{eqn:td-td} describes the update step in temporal-difference learni
 We define the \textbf{TD target} according to the Bellman expectation equation -- $\delta = R_{t+1} + \gamma V(S_{t+1})$.
 After each step of experience, the current value is adjusted softly towards the \textbf{TD error} which is simply $\delta - V(S_t)$.
 
-\subsubsection{TD Control}
-TD control, like Monte Carlo control, uses GPI with TD as the prediction step.
+\textbf{TD control}, like Monte Carlo control, uses GPI with TD as the prediction step.
 Control algorithms are split into two distinct classes: on-policy and off-policy algorithms.
 We explain the difference between the two, then focus on the off-policy TD case (Q-learning, in Section \ref{rl:q-learning}).
 
 \subsubsection{On-Policy and Off-Policy Control}
 In control algorithms, we can distinguish two different types of policies.
 \begin{enumerate}
-    \item The \textbf{target policy} is the policy which the algorithm tries to predict (estimate) -- this has been the type that we have mostly explained so far.
-    All RL algorithms optimize a target policy.
+    \item The \textbf{target policy} is the policy which the algorithm estimates or optimizes -- this type, whether explicitly or implicitly, is present in all RL algorithms.
     \item The \textbf{behaviour policy} (sometimes denoted by $\mu$) is the policy effectively followed by the agent, i.e. it is directly used to choose actions in the environment.
 \end{enumerate}
 
-The class of algorithms which uses a behaviour policy $\mu$ in order to learn about a target policy $\pi$ is called \textbf{off-policy}.
+The class of algorithms which uses a behaviour policy $\mu$ in order to learn about a \emph{separate} target policy $\pi$ is called \textbf{off-policy}.
 Off-policy agents try to learn optimal behaviour by observation of exploratory behaviour.
-In \textbf{on-policy} learning, the learned policy is the same as the behaviour policy.
-On-policy learning agents learn ``on the job'' \cite{silver-lectures}, i.e. estimate a policy by acting according to that policy.
 
-% todo: mention some advantages of off-policy learning
+The alternative strategy is \textbf{on-policy} learning, in which the learned policy coincides with the behaviour policy.
+On-policy learning agents learn ``on the job'' \cite{silver-lectures}, i.e. evaluate a policy by acting according to that policy.
 
 TD learning contains strategies aligning with both categories: Sarsa is an on-policy TD control algorithm, while Q-learning is its off-policy counterpart.
 
-\subsection{Q-Learning} \label{rl:q-learning}
+\subsection{Q-learning} \label{rl:q-learning}
 Q-learning \cite{Watkins1992} appeared in 1992 and is considered one of the early breakthroughs of RL \cite{rlai}.
 It is a simple algorithm allowing an agent to learn an optimal policy in an unknown environment.
