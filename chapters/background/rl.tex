@@ -352,10 +352,10 @@ They are more desirable \emph{in general}, as on-policy agents tend to learn sub
 
 Despite being generally more useful, off-policy learning introduces \textbf{additional complexity} because it needs additional guarantees.
 Off-policy learning assumes that behaviour policy $\mu$ has \textbf{coverage} of the target policy $\pi$ \cite{rlai}.
-Coverage implies that $\mu$ visits all state-action pairs that would be visited by $\pi$.
+Coverage implies that $\mu$ keeps visiting all state-action pairs that would be visited by $\pi$.
+In other words, we can say that $\pi(s, a) > 0$ implies that $\mu(s, a) > 0$.
 
-% This would be a good place to plug-in and explain Cliff Walking in detail.
-% in that case, this should break off and become its own section
+% todo: This would be a good place to plug-in and explain Cliff Walking in detail.
 
 TD learning contains strategies aligning with both categories: Sarsa is an on-policy TD control algorithm, while Q-learning is its off-policy counterpart.
 
@@ -363,11 +363,14 @@ TD learning contains strategies aligning with both categories: Sarsa is an on-po
 \textbf{Q-learning} \cite{Watkins1992} an off-policy TD learning algorithm considered one of the early breakthroughs of RL.
 Its rather non-descriptive name comes from the action-value function $Q$ (which itself stands for ``quality'').
 
+% todo: Consider whether this chapter should be "Sarsa and Q-learning" where we present both algorithms instead of only Q-learning.
+
 Q-learning learns an optimal policy by following an $\varepsilon$-greedy exploratory policy.
+Both policies are directly based on the learned action-value function.
 The principle underneath, however, can be adapted to learn from any other policy as long as the coverage property is respected.
 Q-learning achieves coverage, since a greedy policy is ``included'' into its $\varepsilon$-greedy counterpart.
 
-At each step, the algorithm bootsraps using the maximum action-value over the next state in order to better estimate current state value.
+At each step, Q-learning bootstraps using the \emph{maximum} action-value over all successor states in order to better estimate the current state value.
 The update rule is represented in Figure \ref{fig:q-learning-backup}.
 The arc over the set of successor states represents the maximization (greedy) operation.
 
@@ -388,4 +391,4 @@ It follows the TD learning pattern presented in Equation \ref{eqn:td-td}. Here, 
     ]
 \end{equation}
  
-\pagebreak
+\clearpage
