@@ -361,8 +361,31 @@ TD learning contains strategies aligning with both categories: Sarsa is an on-po
 
 \subsection{Q-learning} \label{rl:q-learning}
 \textbf{Q-learning} \cite{Watkins1992} an off-policy TD learning algorithm considered one of the early breakthroughs of RL.
-Its rather non-descriptive name comes from the action-value function $Q$ (which itself presumably stands for ``quality'').
+Its rather non-descriptive name comes from the action-value function $Q$ (which itself stands for ``quality'').
 
-Q-learning learns a (deterministic) optimal policy from an $\varepsilon$-greedy exploratory policy.
-Q-learning achieves coverage, since a greedy policy is ``included'' into its $\varepsilon$-greedy couterpart.
+Q-learning learns an optimal policy by following an $\varepsilon$-greedy exploratory policy.
+The principle underneath, however, can be adapted to learn from any other policy as long as the coverage property is respected.
+Q-learning achieves coverage, since a greedy policy is ``included'' into its $\varepsilon$-greedy counterpart.
+
+At each step, the algorithm bootsraps using the maximum action-value over the next state in order to better estimate current state value.
+The update rule is represented in Figure \ref{fig:q-learning-backup}.
+The arc over the set of successor states represents the maximization (greedy) operation.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=3cm]{q-learning-backup.png}
+    \caption{Q-learning backup diagram.}
+    \label{fig:q-learning-backup}
+\end{figure}
+
+The same rule is mathematically represented in Equation \ref{eqn:q-learning-update-rule}.
+It follows the TD learning pattern presented in Equation \ref{eqn:td-td}. Here, our \textbf{TD target} uses the maximum successor Q-value -- $\delta = R_{t+1} + \gamma \max_{a \in A}{Q(S_{t+1}, a)}$.
+
+
+\begin{equation} \label{eqn:q-learning-update-rule}
+    Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [
+        R_{t+1} + \gamma \max_{a \in A}{Q(S_{t+1}, a)} - Q(S_t, A_t)
+    ]
+\end{equation}
  
+\pagebreak
