@@ -86,7 +86,7 @@ In contrast, kernels are significantly smaller than the input volume is (in the 
 Kernels are also reused across the entire layer (\textbf{parameter sharing}), resulting in smaller memory requirements.
 
 ConvNets feature \textbf{sparse interactions}, in contrast to the dense interactions of fully-connected layers in which every output is related by a weight to each of the input values.
-This boost learning efficiency by reducing the number of necessary computations.
+This boosts learning efficiency by reducing the number of necessary computations.
 
 Learning smaller, shared kernels can be a means of controlling \emph{overfitting} \cite{Goodfellow-et-al-2016}. Moreover, ConvNets can operate on input data of \textbf{varying sizes} without making adjustments to model architecture.
 
@@ -94,14 +94,14 @@ Learning smaller, shared kernels can be a means of controlling \emph{overfitting
 \subsubsection{Pooling}
 The \textbf{pooling stage} is an optional stage in the ConvNet architecture which performs a \emph{downsampling} of its inputs.
 The role of this stage is to gradually reduce computation (and memory requirements) in the network by reducing the spatial dimension of the data \cite{stanford-convnets}.
-It usually processes output from the convolutional stage to which it applies a pooling function.
+It processes output from the convolutional stage by applying a pooling function.
 
 A \textbf{pooling function} computes a summary statistic (e.g. maximum, average, $l^2$-norm etc.) over a neighbourhood of input values \cite{Goodfellow-et-al-2016}.
 The pooling stage has a similar operation to the convolutional stage:
 a moving window is slided over and across the input data and at each step, the summary is computed.
 
 Each depth slice of the data is processed independently.
-An example for a simple but commonly use operation (max pooling) is shown in Figure \ref{fig:maxpooling}.
+An example for a simple but commonly used operation (max pooling) is shown in Figure \ref{fig:maxpooling}.
 
 \begin{figure}[h]
     \centering
