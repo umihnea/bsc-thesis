@@ -111,6 +111,39 @@ An example for a simple but commonly used operation (max pooling) is shown in Fi
 \end{figure}
 
 \subsection{Deep Q-Networks (DQN)} \label{section:dqn}
+To reiterate our chapter introduction, a key challenge of applying RL to real-world problems is data representation (in the form of policies and value functions).
+Real applications require modelling large, high-dimensional problem spaces and hence depend upon functional approximation.
+
+However, functional approximators, whether linear or nonlinear, require ready access to \textbf{features}.
+A \textbf{feature} is an independent, measurable property of an observed phenomenon.
+Choosing which features of the training data yield the most \emph{relevant} information is a central problem in machine learning.
+This is obvious from the perspective of supervised learning, but the same principle applies to RL problem environments.
+
+Most succesful systems (prior to DQN) have relied on \textbf{handcrafted feature sets}, created by experts to capture the problem-relevant information so the RL system does not have to.
+Other attempts have relied on \textbf{autoencoders} as a preprocessing step to lower the dimensionality of the observation before feeding it to the agent (used for example in \emph{neural Q-fitting} \cite{neural-q-fitted}).
+
+This section introduces \emph{Mnih et al.}'s \textbf{DQN} \cite{atari-dqn}, a deep model-free learning method that uses \textbf{automatic feature extraction} (is capable of finding an efficient representation directly from interactions with the environment).
+The researchers have demonstrated that a DQN agent with the same hyperparameters is able to learn from widely different environments, with no prior knowledge.
+
+The paper benchmarks the agent on 49 video games for the Atari 2600, using the Atari Learning Environment \cite{ale-paper} (a extension layer over an emulator, specially designed to serve as a task environment).
+The selection features diverse mechanics and some games require the development of long-term strategies to perform reasonably well at.
+The vanilla DQN agent scored better than existing methods (including NEAT\footnotemark) on the vast majority of the games.
+\footnotetext{standing for \emph{neuroevolution of augmenting topologies}, a genetic algorithm for generating neural network topologies}
+Moreover, it managed a human-like performance at a considerable number of games, according to the evaluation techniques used in the paper.
+According to this evaluation, the agent scored highest in \emph{Pong}, \emph{Enduro} and \emph{Breakout}, outperforming expert human players.
+
+\subsubsection{Algorithm}
+% Overview of the learning process: how we model the RL problem into a deep learning problem
+The algorithm described in the paper is roughly based on \textbf{Q-learning} (described in Section \ref{rl:q-learning}), fitted with deep convolutional networks which approximate the action-value function $Q$, suggestively called \textbf{deep Q-networks}.
+
+% Algorithm specificiation from paper
+% Computing the gradients using Q-learning’s update formula
+% Defining and optimizing the loss function
+% RMSProp (see green paragraph above) 
+
+% This should remain the end paragaph, in order to transition to explanations for experience replay and target networks.
+Off-policy learning, bootstrapping (both characteristics of Q-learning) and functional approximation are \textbf{incompatible} at a fundamental level (the three elements comprise the so-called \emph{deadly triad} \cite{rlai}), as the combination fails to converge in theory.
+In order to work properly, DQN modifies Q-learning in a few fundamental ways to overcome this incompatibility, by using \textbf{experience replay} and an additional \textbf{target network}.
 
 \subsection{Policy Optimization Methods} \label{section:policy-opt}
 
