@@ -136,7 +136,7 @@ DQN scored better than existing methods (including NEAT\footnotemark) on the vas
 It managed \emph{human-like} performance at a significant number of games, according to the evaluation techniques used in the paper.
 The agent scored highest in \emph{Pong}, \emph{Enduro} and \emph{Breakout}, outperforming expert human players \cite{ale-paper}.
 
-\subsubsection{Algorithm}
+\subsubsection{Overview}
 The algorithm described in the paper is roughly based on \textbf{Q-learning} (described in Section \ref{rl:q-learning}), fitted with deep convolutional networks which approximate the action-value function $Q$, suggestively called \textbf{deep Q-networks}.
 
 The learning rule is formulated in (\ref{eqn:deepq-learning-rule}) and represents a \emph{semi-gradient version} of the Q-learning update in (\ref{eqn:q-learning-update-rule}).
@@ -153,7 +153,7 @@ The values of a state-action pair $(s, a)$ are obtained by performing a forward 
 
 The gradient in (\ref{eqn:deepq-learning-rule}) is computed by backpropagation and uses \emph{mini-batch gradient descent} in conjunction with the \emph{RMSProp} algorithm \cite{atari-dqn}.
 
-\textbf{Mini-batch} gradient descent (or mini-batch GD) is a variation of gradient descent which computes the error for a relatively small subsequence of examples from the training dataset.
+\textbf{Mini-batch gradient descent} is a variation of gradient descent (GD) which computes the error for a relatively small subsequence of examples from the training dataset.
 This has the advantage of being more computationally efficient than stochastic GD (which performs the calculation for only one example), while avoiding to load the entire batch into memory (as in full-batch GD).
 
 \textbf{RMSProp} is a gradient descent algorithm proposed by Geoff Hinton in 2012.
@@ -164,11 +164,30 @@ Each step-size is fine-tuned based on a \emph{moving average} of the (most recen
 Off-policy learning, bootstrapping (both characteristics of Q-learning) and functional approximation are \textbf{incompatible} at a fundamental level (the three elements comprise the so-called \emph{deadly triad} \cite{rlai}), as the combination fails to converge in theory.
 In order to work properly, DQN modifies Q-learning in a few fundamental ways to overcome this incompatibility, by using \textbf{experience replay} and an additional \textbf{target network}.
 
-\subsection{Experience Replay}
-% 
+\subsubsection{Experience Replay}
 
-\subsection{Target Network}
-% 
+A \textbf{transition} (or episode) is a tuple $e_t = (S_t, A_t, R_{t+1}, S_{t+1})$, consisting of the initial state-action pair at time-step $t$, along with the reward and the successor state.
+\textbf{Experience replay} consists of accumulating the agent's experienced transitions over multiple episodes of play in a \emph{replay memory} $\mathcal{D}$.
+
+At every step of learning, the algorithm samples from the replay memory to generate a \textbf{mini-batch} of transitions.
+In this variant of Q-learning, the successor state is no longer the direct successor $S_{t+1}$, but instead is an entirely disconnected experience, chosen at random from $\mathcal{D}$.
+Being off-policy, Q-learning is resilient to this adjustment and thankfully still adheres to its classical properties \cite{rlai}.
+
+Storing experiences over time allows for better \emph{sample efficiency} by reusing previous experiences over multiple update steps.
+The \emph{random sampling} aspect plays a key role in DQN by decoupling highly corelated states.
+This, in effect, reduces variance by removing the dependence of succesive experiences on the network's weights at that point \cite{rlai}.
+
+\subsubsection{Target Network}
+
+In vanilla Q-learning, the learning rule evaluates two successive states under the \emph{same} action-value function.
+However, when using a neural network to approximate the action-value function, this creates an unnecessary dependency of the network's weights $\theta_{i+1}$ on the previous set of weights $\theta_{i}$.
+In the usual setting of supervised learning, neural networks are optimized to learn fixed, well-defined labels.
+By contrast, our learning rule in (\ref{eqn:deepq-learning-rule}) enforces a ``moving target’’ which can lead to \textbf{divergence}.
+
+To counteract this, DQN introduces a \textbf{target network}, with an identical architecture to the main Q-network. This network stores the weights of the main network ``frozen'' at some previous point during training.
+In this way, we provide a \emph{fixed target} for our main network to ``move'' towards.
+Finally, in order to make progress, the networks need to be periodically swapped.
+The swap frequency is specified by a hyperparameter.
 
 \subsection{Policy Optimization Methods} \label{section:policy-opt}
 
