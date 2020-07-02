@@ -13,7 +13,7 @@ In Section \ref{section:convnets}, we present \textbf{convolutional neural netwo
 
 Section \ref{section:dqn} covers using neural networks (called deep Q-networks in the paper \cite{atari-dqn}) as approximators in Q-learning in order to build autonomous agents for complex model-free environments.
 
-The rest of the chapter (Sections \ref{section:policy-opt} and \ref{section:actor-critic}) deals with alternative strategies for doing (deep) model-free control, namely \textbf{policy optimization} and \textbf{actor-critic} methods respectively.
+The rest of the chapter (Sections \ref{section:pg} and \ref{section:actor-critic}) deals with alternative strategies for doing (deep) model-free control, namely \textbf{policy optimization} and \textbf{actor-critic} methods respectively.
 
 \clearpage
 
@@ -134,7 +134,7 @@ The approach was demonstrated to perform well in widely different environments, 
 DQN scored better than existing methods (including NEAT\footnotemark) on the vast majority of the games.
 \footnotetext{standing for \emph{neuroevolution of augmenting topologies}, a genetic algorithm for generating neural network topologies.}
 It managed \emph{human-like} performance at a significant number of games, according to the evaluation techniques used in the paper.
-The agent scored highest in \emph{Pong}, \emph{Enduro} and \emph{Breakout}, outperforming expert human players \cite{ale-paper}.
+The agent scored highest in \emph{Pong}, \emph{Enduro} and \emph{Breakout}, outperforming expert human players \cite{atari-dqn}.
 
 \subsubsection{Overview}
 The algorithm described in the paper is roughly based on \textbf{Q-learning} (described in Section \ref{rl:q-learning}), fitted with deep convolutional networks which approximate the action-value function $Q$, suggestively called \textbf{deep Q-networks}.
@@ -174,7 +174,7 @@ In this variant of Q-learning, the successor state is no longer the direct succe
 Being off-policy, Q-learning is resilient to this adjustment and thankfully still adheres to its classical properties \cite{rlai}.
 
 Storing experiences over time allows for better \emph{sample efficiency} by reusing previous experiences over multiple update steps.
-The \emph{random sampling} aspect plays a key role in DQN by decoupling highly corelated states.
+The \emph{random sampling} aspect plays a key role in DQN by decoupling highly correlated states.
 This, in effect, reduces variance by removing the dependence of succesive experiences on the network's weights at that point \cite{rlai}.
 
 \subsubsection{Target Network}
@@ -189,6 +189,47 @@ In this way, we provide a \emph{fixed target} for our main network to ``move'' t
 Finally, in order to make progress, the networks need to be periodically swapped.
 The swap frequency is specified by a hyperparameter.
 
-\subsection{Policy Optimization Methods} \label{section:policy-opt}
+% Conclusion?
+% The algorithm as given in the paper to tie it all up?
+% Sprinkle some images?
+
+\subsection{Policy Gradients} \label{section:pg}
+
+The DQN method presented in the previous section applies methods from supervised learning in order to approximate a value function. Because of this, the algorithm is a type of \emph{value function approximation}.
+We learn a representation of our value function by adjusting a set of parameters $\theta$ which represent the weights and biases of a neural network.
+\begin{equation}
+    Q(s, a) \approx \hat{Q}(s, a; \theta)
+\end{equation}
+
+In constrast, \textbf{policy-based reinforcement learning} directly paramerizes the \emph{policy}.
+\begin{equation}
+    \pi(a \given s) \approx \hat{\pi}(a \given s; \theta)
+\end{equation}
+
+This has a series of advantages over value approximation methods.
+For example, it has \textbf{better convergence} properties as the problem it solves is -- in some sense -- less complex.
+Value-based methods are trying to approximate the exact score that a state might yield, which is a relatively complicated task.
+By contrast, a learned policy only needs to have a proper distribution over the actions to perform well, without making any assumption about the actual values.
+
+Policy-based methods also have an advantage with \textbf{continuous action spaces}.
+Continuous action spaces are especially important for robotics, where we often represent movement using rotation and force vectors.
+The $max$ operator in Q-learning and Sarsa does not scale to continuous spaces, making them unsuitable for certain types of tasks (at least without significant extensions and tweaking).
+
+A key advantage of policy-based learning is being able to directly learn the \textbf{optimal stochastic policy}.
+In the classical (tabular) case, we assumed perfect state representation -- hence, a deterministic policy would indeed be the optimal policy.
+However, in the approximated case, deterministic policies can fail due to partial observability of the environment (since we are relying on \emph{features} which by definition attempt to extract relevant but partial information).
+
+A feature set might be insufficient to distinguish some states from others. This phenomenon is referred to as \textbf{state aliasing}.
+Consider a situation in which we cannot distinguish between two grey tiles, as shown in the gridworld in Figure \ref{fig:state-aliasing}.
+A deterministic agent could either decide to go East or West on both grey tiles.
+Either choice results in a possibility of getting stuck (the policy creates a loop).
+A stochastic policy assigning $0.5$ to both East and West on a grey square would perform better in this case.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{silver-state-aliasing.png}
+    \caption{An aliased gridworld. (Illustration from \cite{silver-lectures})}
+    \label{fig:state-aliasing}
+\end{figure}
 
 \subsection{Actor-Critic Methods} \label{section:actor-critic}
