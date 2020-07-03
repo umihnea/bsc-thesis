@@ -203,7 +203,7 @@ We learn a representation of our value function by adjusting a set of parameters
 
 In constrast, \textbf{policy-based reinforcement learning} directly paramerizes the \emph{policy}.
 \begin{equation}
-    \pi(a \given s) \approx \hat{\pi}(a \given s; \theta)
+    \pi(a \given s) \approx \hat{\pi}(a \given s; \theta) \mbox{ also denoted as } \pi_{\theta}(a \given s)
 \end{equation}
 
 This has a series of advantages over value approximation methods.
@@ -217,13 +217,13 @@ The $max$ operator in Q-learning and Sarsa does not scale to continuous spaces, 
 
 A key advantage of policy-based learning is being able to directly learn the \textbf{optimal stochastic policy}.
 In the classical (tabular) case, we assumed perfect state representation -- hence, a deterministic policy would indeed be the optimal policy.
-However, in the approximated case, deterministic policies can fail due to partial observability of the environment (since we are relying on \emph{features} which by definition attempt to extract relevant but partial information).
+However, in the approximated case, deterministic policies can fail due to partial observability of the environment (since we are relying on \emph{features} which by definition are relevant but partial information).
 
 A feature set might be insufficient to distinguish some states from others. This phenomenon is referred to as \textbf{state aliasing}.
 Consider a situation in which we cannot distinguish between two grey tiles, as shown in the gridworld in Figure \ref{fig:state-aliasing}.
-A deterministic agent could either decide to go East or West on both grey tiles.
+A deterministic agent could decide to go either East or West on \emph{both} grey tiles.
 Either choice results in a possibility of getting stuck (the policy creates a loop).
-A stochastic policy assigning $0.5$ to both East and West on a grey square would perform better in this case.
+A stochastic policy assigning $0.5$ to both East and West on a grey tile would perform better in this case.
 
 \begin{figure}[h]
     \centering
@@ -232,4 +232,57 @@ A stochastic policy assigning $0.5$ to both East and West on a grey square would
     \label{fig:state-aliasing}
 \end{figure}
 
+The premise of policy optimization is the existence of an \textbf{objective function} $J(\theta)$ measuring the quality of $\pi_{\theta}$.
+The problem of optimizing $J$ is solvable by a vast array of techniques such as hill climbing, simulated annealing etc.
+
+One effective way to maximize the objective function is by \textbf{gradient ascent}, which is the foundation of this class of algorithms.
+For this, we move our current set of weights \emph{slightly} (i.e., the extent is given a step-size $\alpha$) towards the direction given by the gradient of the performance measure $J(\theta_{t})$ with regard to its argument.
+\begin{equation} \label{eqn:pg-general-rule}
+    \theta_{t+1} \leftarrow \theta_{t} + \alpha \hat{ \nabla_{\theta_{t}} J(\theta_{t}) }
+\end{equation}
+
+Methods which follow this schema, regardless of whether or not they use an additional value function, are considered \textbf{policy gradient methods} \cite{rlai}.
+
+The performance of a policy generally depends on $\theta$ in two ways:
+\begin{itemize}
+    \item It \emph{directly} depends on how $\pi_{\theta}$ selects actions.
+    \item It \emph{indirectly} depends on the distribution of the states in which those actions are taken.
+\end{itemize}
+Considered independently, action selection's influence on $\theta$ can be clearly observed.
+Given a state $s$, the direct effect of $\theta$ on actions can be observed directly by looking at obtained rewards.
+In the latter case, the effect our policy has on the state distribution depends on the environment and is generally \emph{unknown} \cite{rlai}.
+
+The \textbf{policy gradient theorem} (PCT) provides an expression for the gradient of the performance with regard to its arguments which does not depend on the state distribution \cite{rlai}.
+The expression is given in (\ref{eqn:pg-theorem}) for the episodic case.
+\begin{equation} \label{eqn:pg-theorem}
+    \nabla_{\theta} J(\theta) \propto
+        \sum_{s}{
+            \mu(s) \sum_{a}{
+                q_{\pi_{\theta}}(s, a) \nabla_{\theta} \pi_{\theta}(a \given s)
+            }
+        }
+\end{equation}
+
+\subsubsection{Monte Carlo Policy Gradients}
+\textbf{Monte Carlo policy gradients} (also referred to as REINFORCE in the literature) are the simplest practical application of policy gradients.
+
+In order to fit into the general framework described by (\ref{eqn:pg-general-rule}), we need a way to draw samples such that the expectation of the sample gradient is proportional to $\nabla_{\theta} J(\theta)$ \cite{rlai}.
+This algorithm relies on Monte Carlo methods in order to estimate said gradient.
+
+The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of assumptions (the explanation of which are out of the scope of this paper) in order to reach the form presented below.
+\begin{equation}
+    \theta \leftarrow \theta + \alpha \gamma^{t} G_{t} \nabla_{\theta} \ln{\pi_{\theta}(A_{t} \given S_{t})}
+\end{equation}
+
 \subsection{Actor-Critic Methods} \label{section:actor-critic}
+\textbf{Actor-critic methods} are a subset of policy gradient methods which evolved into a slightly different direction.
+Their distinguishing feature is that they combine two models:
+\begin{itemize}
+    \item An \textbf{actor}, which is expressly a policy-based learner.
+    \item A \textbf{critic}, which learns an additional value function with its own set of weights $w$. The critic can either be an action value function $Q_{w}$ or a state-value function $V_{w}$.
+\end{itemize}
+
+The actor and the critic are generally learned independently but occasionally may share parameters, depending on the algorithm.
+The key point is that the actor updates its policy parameters in the direction indicated by the critic’s computation of the value function.
+
+% 2-3 paragraphs dedicated to asyncronous actor-critic (A3C)
