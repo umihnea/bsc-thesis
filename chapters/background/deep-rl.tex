@@ -238,10 +238,11 @@ The problem of optimizing $J$ is solvable by a vast array of techniques such as 
 One effective way to maximize the objective function is by \textbf{gradient ascent}, which is the foundation of this class of algorithms.
 For this, we move our current set of weights \emph{slightly} (i.e., the extent is given a step-size $\alpha$) towards the direction given by the gradient of the performance measure $J(\theta_{t})$ with regard to its argument.
 \begin{equation} \label{eqn:pg-general-rule}
-    \theta_{t+1} \leftarrow \theta_{t} + \alpha \hat{ \nabla_{\theta_{t}} J(\theta_{t}) }
+    \theta_{t+1} \leftarrow \theta_{t} + \alpha \widehat{ \nabla_{\theta_{t}} J(\theta_{t}) }
 \end{equation}
 
 Methods which follow this schema, regardless of whether or not they use an additional value function, are considered \textbf{policy gradient methods} \cite{rlai}.
+The expression $\widehat{ \nabla_{\theta_{t}} J(\theta_{t}) }$ in (\ref{eqn:pg-general-rule}) represents an estimator of the gradient term.
 
 The performance of a policy generally depends on $\theta$ in two ways:
 \begin{itemize}
@@ -274,9 +275,11 @@ The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of 
     \theta \leftarrow \theta + \alpha \gamma^{t} G_{t} \nabla_{\theta} \ln{\pi_{\theta}(A_{t} \given S_{t})}
 \end{equation}
 
+% Including an arbitrary \textbf{baseline} in a method such as REINFORCE can help reduce variance during learning, while not introducting bias.
+% One condition required (to avoid bias) is that it does not depend on any policy parameter in $\theta$.
+
 \subsection{Actor-Critic Methods} \label{section:actor-critic}
-\textbf{Actor-critic methods} are a subset of policy gradient methods which evolved into a slightly different direction.
-Their distinguishing feature is that they combine two models:
+\textbf{Actor-critic methods} are a subset of policy gradient methods whose distinguishing feature is that they combine two models:
 \begin{itemize}
     \item An \textbf{actor}, which is expressly a policy-based learner.
     \item A \textbf{critic}, which learns an additional value function with its own set of weights $w$. The critic can either be an action value function $Q_{w}$ or a state-value function $V_{w}$.
@@ -285,4 +288,10 @@ Their distinguishing feature is that they combine two models:
 The actor and the critic are generally learned independently but occasionally may share parameters, depending on the algorithm.
 The key point is that the actor updates its policy parameters in the direction indicated by the critic’s computation of the value function.
 
-% 2-3 paragraphs dedicated to asyncronous actor-critic (A3C)
+% Actor-critic methods are desirable because you can basically perform one-step (or n-step) bootstrapping
+% The most basic algorithm computes TD-error \delta using its approx. value function, then both the value function and the policy are adjusted in that direction
+
+Actor-critic methods are considered an important advance in deep RL research.
+Among its more well recognized algorithms is \textbf{asyncronous advantage actor-critic} or \textbf{A3C}, invented by \emph{Mnih et al.} in 2016 \cite{a3c-paper}.
+The paper proposes an algorithm designed for parallel procesing.
+In particular, the architecture features multiple actors which are trained in parallel, while critics (to whom the actors report) construct approximations of the value function from the their experiences.
