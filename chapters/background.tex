@@ -1,12 +1,17 @@
-This chapter introduces the concepts necessary to understanding the subject of this thesis.
-We aim to:
-\begin{itemize}
-    \item present the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment;
-    \item explain how we can reason about problems using this paradigm;
-    \item introduce key concepts in the field of \emph{reinforcement learning (RL)};
-    \item describe \emph{Q-learning} and how we can use neural networks to improve the classic algorithm;
-    \item exemplify a successful application of this approach.
-\end{itemize}
+This chapter introduces the concepts necessary to understanding the subject of this thesis -- implementing a learning agent using reinforcement learning.
+
+In \emph{Chapter \ref{agents-intro}. Intelligent Agents} we aim to present the central pieces of the \textbf{agent-based approach} in artificial intelligence: agent and environment.
+We explore the constituents of a learning agent system and explain how we can reason about problems using the notion of task environment.
+
+\emph{Chapter \ref{reinforcement-learning}. Reinforcement Learning} introduces key concepts in the field of RL. This chapter dwells into \textbf{theoretical fundamentals} (Markov decision processes) and their application in solving problems in this paradigm.
+
+In the same chapter, we present an array of \textbf{classical solution methods}, ranging from Monte Carlo (which simply applies statistical sampling to learn from an unknown environment) to more subtle methods such as temporal-difference (TD) learning.
+
+In \emph{Chapter \ref{deep-rl}. Deep Reinforcement Learning}, we explain how to scale the classical solutions to solve larger, more relevant problems.
+Deep RL represents an \textbf{active area of reasearch} and an extensive survey of the state-of-the-art would be out of the scope of this paper.
+Instead, we cover a few tried-and-tested solution methods which had moderate success in their application.
+
+\clearpage
 
 \section{Intelligent Agents} \label{agents-intro}
 \input{chapters/background/intelligent_agents.tex}

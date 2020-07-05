@@ -242,7 +242,7 @@ For this, we move our current set of weights \emph{slightly} (i.e., the extent i
 \end{equation}
 
 Methods which follow this schema, regardless of whether or not they use an additional value function, are considered \textbf{policy gradient methods} \cite{rlai}.
-The expression $\widehat{ \nabla_{\theta_{t}} J(\theta_{t}) }$ in (\ref{eqn:pg-general-rule}) represents an estimator of the gradient term.
+The hat over $\nabla_{\theta_{t}} J(\theta_{t})$ in (\ref{eqn:pg-general-rule}) symbolizes that the term can in fact be an \textbf{estimator} of the gradient term. The methods of estimation differ -- we will exemplify one below, using Monte Carlo.
 
 The performance of a policy generally depends on $\theta$ in two ways:
 \begin{itemize}
