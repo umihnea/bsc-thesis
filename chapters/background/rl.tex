@@ -5,7 +5,7 @@ At the core of RL lays the reward function (or signal), which perfectly describe
 In the following chapter, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this paper.
 
 In section \ref{rl:dp} we cover the first solution technique: using dynamic programming in a known, finite MDP to find its optimal solution.
-In section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte-Carlo learning.
+In section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte Carlo learning.
 In section \ref{rl:td}, we visit temporal-difference learning and finally develop our solution using Q-learning in section \ref{rl:q-learning}.
 
 \subsection{Components and Notation}
@@ -69,10 +69,10 @@ In equation \ref{eqn:return}, we use an infinite-horizon sum with discounting.
     G_t = R_{t+1} + \gamma R_{t+2} + \dots = \sum_{k = 0}^{\infty}{\gamma^{k} R_{t + k + 1}}    
 \end{equation}
 
-Discounting is, intuitively, a way to control how much the agent cares about future rewards.
-More on this topic can be found in either theoretical reference \cite{rlai, silver-lectures}.
-
-% todo: explain why discounting is used and why it is convenient
+The purpose of the \textbf{discount factor} $\gamma$ is dual.
+Discounting is, \emph{intuitively}, a way to control how much the agent cares about future rewards.
+It incorporates a model of \emph{human thought}: immediate reward is preferred to delayed reward.
+A value of $\gamma$ in $(0, 1)$ is also \emph{mathematically} convenient, as it serves as a guarantee for convergence in infinite horizon sums such as the one expressed in (\ref{eqn:return}).
 
 \subsubsection{Value Functions} \label{rl:value-func}
 The \textbf{state-value function} for policy \(\pi\) is denoted by \(V^{\pi}(s)\) and measures how good each state is, with regard to the long-term potential of that state.
