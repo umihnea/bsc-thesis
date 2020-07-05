@@ -26,7 +26,7 @@ Among those, image classification tasks are the primary reason for the architect
 
 The \textbf{origin} of convolutional networks can be traced back to Kunihiko Fukushima's \emph{neocognitron} (1979).
 Kunihiko’s design \cite{neocognitron-paper} was itself inspired by earlier breakthroughs in neuroscience -- namely studies of the visual cortex of mammals (Hubel \& Wiesel, 1959).
-LeCun et al. (1989) further improved this model by introducting backpropagation training, which set the standard for today’s architectures.
+LeCun et al. (1989) further improved Kunihiko’s model by introducting backpropagation training, which set the standard for today’s architectures.
 
 \subsubsection{Overview}
 A convolutional network contains at least one convolutional layer in its structure.
@@ -227,8 +227,13 @@ A stochastic policy assigning $0.5$ to both East and West on a grey tile would p
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.3\textwidth]{silver-state-aliasing.png}
-    \caption{An aliased gridworld. (Illustration from \cite{silver-lectures})}
+    \includegraphics[width=0.6\textwidth]{silver-state-aliasing-compare.png}
+    \caption{
+        An aliased gridworld. Each arrow represents the policy's decision for that tile.
+        (Left) One of the two possible deterministic policies. Observe the inifinte loop on the left side of the grid.
+        (Right) A stochastic policy which removes the loop by picking either East or West at random.
+        Illustrations from David Silver's lectures \cite{silver-lectures}.
+    }
     \label{fig:state-aliasing}
 \end{figure}
 
@@ -242,7 +247,7 @@ For this, we move our current set of weights \emph{slightly} (i.e., the extent i
 \end{equation}
 
 Methods which follow this schema, regardless of whether or not they use an additional value function, are considered \textbf{policy gradient methods} \cite{rlai}.
-The hat over $\nabla_{\theta_{t}} J(\theta_{t})$ in (\ref{eqn:pg-general-rule}) symbolizes that the term can in fact be an \textbf{estimator} of the gradient term. The methods of estimation differ -- we will exemplify one below, using Monte Carlo.
+The hat over $\nabla_{\theta_{t}} J(\theta_{t})$ in (\ref{eqn:pg-general-rule}) symbolizes that the term can in fact be an \textbf{estimator} of the gradient term. The methods of estimation differ.
 
 The performance of a policy generally depends on $\theta$ in two ways:
 \begin{itemize}
