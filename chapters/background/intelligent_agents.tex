@@ -1,8 +1,8 @@
 This section aims to provide a short introduction to the central pieces of an \emph{agent-based approach} in artificial intelligence: agent and environment.
-Understanding how to formulate relevant problems in terms of agents learning from controlled environments is necessary to the core technique presented in this paper -- reinforcement learning (presented in \ref{reinforcement-learning}).
+Understanding how to formulate relevant problems in terms of agents learning from controlled environments is necessary to reinforcement learning, the core technique presented in this paper.
 
 The concept of rational agent is central to the study of artificial intelligence. 
-It is a natural evolution to the \textit{laws of thought} approach in AI (using a set of logical rules to derive new knowledge).
+It is a natural evolution from the \emph{laws of thought} approach in AI (i.e., using a set of logical rules to derive new knowledge).
 
 As pointed out in \cite{aima}, inference does not capture all of rationality.
 As complex environments imply \textit{uncertain situations} (where there is no provably correct choice to make), a finite set of rules can prove inadequate.
@@ -14,7 +14,7 @@ An agent can be split into two major components, each fulfilling a fundamental f
 \emph{perceptors} (sensors) manage \emph{perception} and \emph{actuators} act upon the environment.
 This is the simplest useful division. We present a more elaborate division later, in Section \ref{learning-agents}.
 
-It is sometimes useful to reason about agents in a mathematical space.
+It is sometimes useful to reason about agents from a mathematical perspective.
 For this, there exists the concept of \emph{agent function}.
 An \textbf{agent function} maps what the agent percieves (every ``snapshot'' of perception, called a \emph{percept}) to an action.
 Outside the world of very small, ideal examples, any agent function can be considered \emph{infinite}.
@@ -50,7 +50,7 @@ In the following paragraphs, we present some \textbf{classification criteria} fo
 \textbf{Observability} can be \emph{full} or \emph{partial}.
 In a fully observable environment, the agent has full information of all the relevant aspects of the world (for example, a chess-playing agent sees the entire chessboard).
 The latter means the agent operates with restricted information.
-Many real-world problems have partial observability due to sensor noise or memory/CPU constraints.
+Many real-world problems have partial observability due to sensor noise or computational constraints (i.e., an upper limit on memory and processing power).
 
 \textbf{Single- or multi-agent}.
 Multi-agent environments are a tool for studying emergent behaviour, wherein relatively simple agents construct elegant and complex solutions to problems.
@@ -59,14 +59,13 @@ The techiques concerning the design of multi-agent systems are frequently subtle
 \textbf{Stochasticity}.
 In a \emph{deterministic} environment, every state is completely determined by its previous. Otherwise, the environment is \emph{stochastic}. An environment is \textbf{uncertain} when it is stochastic and/or partially observable.
 
-\textbf{Discreteness} and \textbf{continuity}.
-This is best understood by example:
-in a game of chess, a chess-playing agent has a finite number of possible actions at every step.
-Chess is therefore a discrete environment.
+\textbf{Discreteness} and \textbf{continuity} describe action spaces and the way time passes inside the environment.
+This is best understood by example.
+A chess-playing agent has a finite number of possible actions at every step.
+Chess is therefore a \emph{discrete} environment.
 An agent driving a car, on the other hand, has control over some real-valued parameters of the car (steering angle, speed and so on).
-Thus, the domain of possible actions in real-world driving is continuous.
-In this example, we used discreteness and continuity to describe the domain of available actions.
-The same property describes \emph{time} inside the environment: in discrete time, time spent deciding does not influence the outcome. The opposite is true for continuous time representation. Coming back to our driving analogy -- every second spent not making a decision is stalling.
+The domain of possible actions in real-world driving is therefore \emph{continuous}.
+In the same way, we can describe time: in discrete time, time spent deciding does not influence the outcome. The opposite is true for continuous time representation -- in real-time driving, every second spent not making a decision is stalling.
 
 \textbf{Known} and \textbf{unknown}.
 This refers to the agent's knowledge of the laws governing its environment. In a known environment, the agent knows the rules of its world a priori. Otherwise, an agent has to learn how the environment works in order to make effective decisions.
@@ -84,17 +83,17 @@ Russel and Norvig provide an excellent description of \textbf{learning} in intel
     Learning in intelligent agents can be summarized as a process of modification of each component of the agent to bring the components into closer agreement with the available feedback information, thereby improving the overall performance of the agent.
 \end{quote}
 
-In our chapter introduction (Section \ref{agents-intro}) we said that agents have an advantage over knowledge-based approaches.
-This advantage comes from the fact that agents can learn in initially \textbf{unknown environments}.
+In our introduction, we said that agents have an advantage over knowledge-based approaches.
+This advantage comes from the fact that agents can learn in initially unknown environments.
 Learning allows agents expand on initial knowledge, if any.
-Learning agent approaches can achieve substantial results starting with \textbf{zero expert knowledge}, as shown by AlphaZero\cite{alpha-zero}.
+Learning agent approaches can achieve substantial results starting with \textbf{zero expert knowledge}, as demonstrated by the Go agent in AlphaZero \cite{alpha-zero}.
 
 According to \cite{aima}, an agent can be divided in four subsystems:
 \begin{enumerate}
-    \item \textbf{the learning element}, which is resposible for improving the agent;
-    \item \textbf{the performance element}, which selects actions (this part is the object of improvement);
-    \item \textbf{the critic}, which provides feedback to the learning element;
-    \item \textbf{the problem generator}, which suggests novel actions, in order to expand knowledge.    
+    \item \textbf{The learning element} is resposible for improving the agent by incorporating information from the environment.
+    \item \textbf{The performance element} perceives the environment and selects actions and is the object of improvement.
+    \item \textbf{The critic} provides feedback to the learning element.
+    \item \textbf{The problem generator} suggests novel actions, in order to expand knowledge.    
 \end{enumerate}
 
 A learning agent overview figure, closely following the schematic provided in \cite{aima}, is shown in Figure \ref{fig:aima-learning-agent}.
@@ -102,12 +101,12 @@ A learning agent overview figure, closely following the schematic provided in \c
 \begin{figure}[ht]
     \includegraphics[width=0.7\textwidth]{aima-general-learning-agent}
     \centering
-    \caption{An overview schematic of the learning agent system.}
+    \caption{An overview schematic for the generalized model of a learning agent.}
     \label{fig:aima-learning-agent}
 \end{figure}
 
 \subsubsection{Learning and Performance}
-The performance elements provides the basic function of the agent: it perceives, decides and acts.
+The performance element fulfills the basic functions of the agent -- it perceives, decides and acts.
 The learning element's job is to improve this performance based on feedback, coming from an outside observer (the critic).
 The learning element's design varies depending on the problem and how the agent is meant to interact with it.
 
@@ -116,14 +115,14 @@ An agent cannot tell whether its behaviour is effective just by observing change
 It needs a \textbf{critic} that provides feedback to the learning element about its performance in the world.
 The critic can esentially be viewed as a stand-alone, external entity.
 It is based on a fixed performance standard which does not depend on the agent's internal state.
-In fact, it is imperative for the critic to be kept separate of agent state.
-This prevents the agent of ``deluding'' itself that it is doing a good job.
+In fact, it is imperative for the critic to be kept separate frim the agent state, to prevent the agent of ``deluding'' itself that it is doing a good job \cite{aima}.
 
 \subsubsection{Problem Generators}
-Agents can get stuck making decisions that yield good but suboptimal results (local optima, a well-known problem in AI).
+Agents can get stuck making decisions that yield good but suboptimal results.
+This is known as the problem of \emph{local optima}, a well-known problem in mathematical optimization which is very relevent in AI.
 This happens because the agent bases its calculations on limited knowledge.
 It needs a component to take care of adding new information into its system.
-The problem generator solves this problem of \textbf{exploration}:
+The problem generator ensures effective \textbf{exploration}:
 choosing options that yield suboptimal results in the short term, in order to discover better strategies on the long term.
 
-\clearpage  % put here to push the RL chapter onto the next page instead of having 2 lines dangling there
+\clearpage  % pushes the RL chapter onto the next page instead of having dangling

@@ -13,7 +13,8 @@ Introduction into reinforcement learning supposes familiarity with the paradigm'
 We present the theory behind Markov decision processes (MDPs) and then we shift our attention to explaing the components of a reinforcement learning agent.
 
 \subsubsection{Finite Markov Decision Processes}
-Finite Markov decision processes are a formalization of a reinforcement learning problem -- any problem which can be represented as a finite MDP can be solved using a RL technique.
+Finite Markov decision processes are a formalization of the reinforcement learning problem.
+Any problem which can be represented as a finite MDP can be solved using a RL technique.
 
 The feedback loop is central to understanding the reinforcement learning dynamic.
 This is just a reiteration of the contents in our previous chapter:
@@ -48,22 +49,22 @@ A key point in Markov processes is that a correctly formulated state captures al
 This is known as the \textbf{Markov property} \cite{silver-lectures}.
 
 A \textbf{policy \(\pi\)} completely characterizes an agent’s behaviour.
-``It is a mapping from perceived states of the environment to actions to be taken in those states'' \cite{rlai}.
-Policies can be deterministic (i.e. ``if this then that'' rules) or stochastic.
+It maps perceived states (observations of the environment) to the actions to be taken based on those states \cite{rlai}.
+Policies can be deterministic (i.e., ``if \verb|p| then \verb|q|'' rules) or stochastic.
 A \textbf{stochastic policy}, denoted \(\pi(a \given s)\), is a probability distribution over actions, given a state.
 
 The \textbf{reward} models the problem-defined goals as a scalar that can be associated with each state transition.
-``The reward signal is the primary basis of altering the policy.'' \cite{rlai}.
+``The reward signal is the primary basis of altering the policy'' \cite{rlai}.
 The assertion that we can completely and correctly model all goals using reward functions is central to the field of RL.
-This is called the \textbf{Reward Hypothesis} and is formulated below:
+This is called the \textbf{reward hypothesis} and is formulated below:
 \begin{quotation}
-    That all of what we mean by goals and purposes can be well thought of as maximization of the expected value of the cumulative sum of a received scalar signal (called reward). \textit{(from \cite{rlai}, Chapter 3.2)}
+    That all of what we mean by goals and purposes can be well thought of as maximization of the expected value of the cumulative sum of a received scalar signal (called reward). (from Chapter 3.2 of \emph{Reinforcement Learning. An Introduction} \cite{rlai})
 \end{quotation}
 
 The \textbf{return} \(G_t\) is the \textbf{cumulative reward} obtained by the agent starting from time step \(t\).
 This is what a reinforcement learning system is supposed to maximize.
 There are multiple mathematical models used to represent the return.
-In equation \ref{eqn:return}, we use an infinite-horizon sum with discounting.
+In the expression below, we use an infinite-horizon sum with discounting.
 
 \begin{equation} \label{eqn:return}
     G_t = R_{t+1} + \gamma R_{t+2} + \dots = \sum_{k = 0}^{\infty}{\gamma^{k} R_{t + k + 1}}    
@@ -82,8 +83,8 @@ Whereas rewards characterize the immediate value of a state, the value function 
     V^{\pi}(s) = \mathbb{E}_{\pi}\{ G_t \given S_t = s \}
 \end{equation}
 
-In Equation \ref{eqn:value}, \(\mathbb{E}\) represents the expected value of a random variable. Here we are interested in the expected value of the return, or simply -- the \emph{expected return}.
-By \(\mathbb{E}_{\pi}\) we denote the expected value conditional on following policy \(\pi\).
+In Equation \ref{eqn:value}, $\mathbb{E}$ represents the expected value of a random variable. Here we are interested in the expected value of the return, or simply, the \textbf{expected return}.
+By subscripting with $\pi$, we mean that the computation of the expected value is conditional on following policy $\pi$.
 We will maintain this notation in the expressions below.
 
 The \textbf{action-value function} \(Q^{\pi}(s, a)\), also known as the Q-value function, measures the desirability of a state-action pair.
@@ -119,8 +120,8 @@ Similarly, \textbf{optimal action-value function $Q^*(s, a)$} is the maximum val
     Q^*(s) = \max_{\pi}{Q^{\pi}(s, a)}
 \end{equation}
 
-Value function approximation is the foundation of multiple solution methods in RL.
-A simple example can be seen in Monte Carlo methods, where the value of a state \(s\) is approximated by averaging over multiple trajectories starting from \(s\).
+Estimating value functions is the foundation of a multitude of solution methods in RL.
+A simple example can be seen in Monte Carlo methods, where the value of a state $s$ is approximated by averaging over multiple trajectories starting from $s$.
 
 \subsubsection{Models} \label{rl:model}
 A \textbf{model} (of the environment) allows the agent to plan and make predictions of its environment.
@@ -137,8 +138,9 @@ Approaches without a model are called \textbf{model-free}. Model-free agents are
 \end{figure}
 
 \subsection{Bellman Equations} \label{rl:bellman}
-The \textbf{Bellman equations} are a set of relations conceived by Richard Bellman in the 1950s, in the context of solving optimal control using dynamic programming.
-In the reinforcement learning context, they interrelate the state-value and action-value functions and provide the basis of solving an MDP whether known or unknown.
+The \textbf{Bellman equations} are a set of relations conceived by Richard Bellman in the 1950s, in the context of optimal control.
+In a reinforcement learning context, they interrelate the state-value and action-value functions and provide recursive definitions for them.
+They form the basis for solving an MDP, whether known or unknown.
 
 Equation \ref{eqn:bellman-expectation} states the \textbf{Bellman expectation equation}.
 The key idea behind this class of Bellman equations is that they express the value of a state as expected sum of immediate reward of being in that state,  plus discounted value of successor state.
@@ -181,7 +183,7 @@ In cases in which the MDP is \emph{known}, we can leverage the fact that we know
 \end{equation}
 
 There exists another relation with important applications in RL -- the \textbf{Bellman optimality equation}.
-One way of expressing the optimality equation, provided in \ref{eqn:bellman-optimality}, simply states the fact that the optimal value of a state must be the value of the best possible action from that state \cite{rlai}.
+One way of expressing the optimality equation, provided in (\ref{eqn:bellman-optimality}), simply states the fact that the optimal value of a state must be the value of the best possible action from that state \cite{rlai}.
 This is an example of interdependence of the two value functions, although it is important to mention that we can express $q_{*}$ in terms of itself as well.
 
 \begin{equation} \label{eqn:bellman-optimality}
@@ -198,7 +200,7 @@ The optimality equation is non-linear, but we cover approximating solutions usin
 While being theoretically useful, there are key bottlenecks which prevent DP from achieving practicality:
 
 \begin{enumerate}
-    \item DP represents a \textbf{subset} of a reinforcement learning problem, as it requires full knowledge of an MDP and, thus, is not suitable in unknown environments.
+    \item DP represents a \textbf{subset} of the reinforcement learning problem, as it requires full knowledge of an MDP and, thus, is not suitable in unknown environments.
     \item DP is \textbf{computationally expensive} as it searches for optimal solutions over the entire state space (suffers from the ``curse of dimensionality'' \cite{rlai}).
     \item DP cannot be applied with \textbf{continuous} spaces, unless problems satisfy additional criteria \cite{rlai}.
 \end{enumerate}
@@ -210,7 +212,7 @@ In theory, the value of each state can be computed by solving a system of Bellma
 However, the computation required is impractical for most problems.
 A more suitable method is \emph{iterative policy evaluation}, which uses equation \ref{eqn:bellman-expectation} iteratively, starting from an arbitraty value function $v_0$ and eventually converging to $v_{\pi}$.
 
-\textbf{Control} (or \textbf{planning}) is, in constrast, concerned with finding the optimal policy $\pi^{*}$ starting from an arbitraty point in the space.
+\textbf{Control} (or \textbf{planning}) is, in constrast, concerned with finding the optimal policy $\pi^{*}$ starting from an arbitraty point in the space of all policies.
 
 Planning can be done using \emph{policy iteration}.
 At every iteration $k$, this method evaluates the given policy $\pi$ to find its value function $v_{\pi}$ (solving the above problem).
@@ -250,17 +252,17 @@ For this, we interact with the environment over multiple episodes, with the cond
 Eventual termination is necessary for all returns to be well-defined.
 
 Monte Carlo introduces one of the missing pieces required to solve model-free problems -- \textbf{sampling}.
-Below, we describe a simplified, general version of the algorithm to better illustrate the approach.
-Each state holds a variable $count(s)$, the number of first-visits (or every-visits) over the set of all sampled episodes, as well as a $sum(s)$ -- the sum of returns over this set of samples.
-
+Here we describe a simplified, general version of the algorithm to better illustrate the approach.
+Let each state hold a variable $count(s)$, counting the number of first-visits (or every-visits) over the set of all sampled episodes, as well as a variable $sum(s)$, summing the values of returns over the same set of samples.
 The value of a state $v(s)$ can then be approximated as the mean over all obtained returns, $sum(s) / count(s)$.
-Given the law of large numbers, $v(s)$ will eventually converge to the correct values as the number of episodes approaches infinity.
+Given the \emph{law of large numbers}, $v(s)$ will eventually converge to the correct values as the number of episodes approaches infinity.
 
 \subsubsection{Monte Carlo Control}
-Monte Carlo addresses the \textbf{complete} reinforcement learning problem, as it only requires episodes of experience to learn the optimal solution, in contrast to DP, which requires a fully known model of the environment.
+Monte Carlo addresses the complete reinforcement learning problem, and more precisely, it solves \textbf{model-free prediction}.
+It only requires episodes of experience to learn the optimal solution (in contrast to DP, which requires a fully known model of the environment).
 
-Thus far, we presented Monte Carlo as a viable strategy for policy evaluation in unknown environments (\emph{model-free prediction}).
-In order to apply this for \textbf{control} problems, we use the General Policy Iteration (GPI) framework, drawing upon what we discussed in Section \ref{rl:dp}, \emph{Dynamic Programming}.
+Since Monte Carlo is a viable strategy for policy evaluation in unknown environments, we can apply it to \textbf{control problems}.
+In order to do this, we use the General Policy Iteration (GPI) framework, drawing upon what we discussed in our dynamic programming section.
 
 \begin{figure}[h]
     \includegraphics[width=5cm]{montecarlo-gpi.png}
@@ -268,16 +270,16 @@ In order to apply this for \textbf{control} problems, we use the General Policy 
     \caption{Monte Carlo control using the GPI framework. (From \cite{rlai})}
 \end{figure}
 
-Applying this pattern, we can use Monte Carlo estimation as the \emph{prediction} step to approximate the optimal policy, thus obtraining Monte Carlo \emph{control}.
-Using action-value functions (which are required in unknown environments, as mentioned in our section on value functions), the policy improvement step is simply done by choosing the action yielding the maximum value.
-
+Applying this pattern, we can use Monte Carlo estimation as the prediction step to approximate the optimal policy, thus obtraining Monte Carlo control.
+Since we this is a control algorithm for unknown environments, we are required to learn the action-value function, as mentioned in our section on value functions.
+The policy improvement step is simply done by choosing the action yielding the maximum value.
 \begin{equation}
     \pi(s) = \argmax_{a \in A}{Q(s, a)}
 \end{equation}
 
 \subsubsection{Exploration and Soft Policies}
 
-Besides the termination requirement, Monte Carlo control will not converge to any useful solution unless efficient \textbf{exploration} of the state space is guaranteed.
+Besides the termination requirement and using the action-value function, Monte Carlo control will not converge to any useful solution unless efficient \textbf{exploration} of the state space is guaranteed.
 For this purpose, we introduce the notion of a \textbf{soft policy}.
 
 Soft policies guarantee that we do not permanently exclude any state from our search, or -- in other words -- that $\pi (s, a) > 0$ for all $s \in S$ and $a \in A$.
@@ -304,10 +306,9 @@ This is called \textbf{bootstrapping} and can be intuitively described as the id
 In Figure \ref{fig:td-mc-update-steps}, an \emph{update step} is not a time-step but instead refers to an iteration of each algortihm.
 In the case of TD(0), the terms do correspond, as the update can be performed after each time-step.
 For Monte Carlo, the update is run only after the end of each episode.
+The concept can be generalized to \textbf{$n$-step bootstrapping} (updating after $n$ steps instead of one).
 
-The concept can be generalized to $n$-step bootstrapping (updating after $n$ steps instead of one).
-
-Temporal-difference solves the same \textbf{prediction} problem as Monte Carlo.
+Temporal-difference solves model-free prediction, the same problem as Monte Carlo.
 In this section we contrast the two approaches and establish the definition of the TD target and the TD error.
 
 We consider a Monte Carlo approach where we update $V^{\pi}(s)$ towards the return $G_t$ softly at the end of each episode, considering a learning rate of $\alpha \in (0, 1)$.
@@ -338,7 +339,7 @@ We explain the difference between the two, then focus on the off-policy TD case 
 In control algorithms, we can distinguish two different types of policies.
 \begin{enumerate}
     \item The \textbf{target policy} is the policy which the algorithm estimates or optimizes -- this type, whether explicitly or implicitly, is present in all RL algorithms.
-    \item The \textbf{behaviour policy} (sometimes denoted by $\mu$) is the policy effectively followed by the agent, i.e. it is directly used to choose actions in the environment.
+    \item The \textbf{behaviour policy} (often denoted by $\mu$) is the policy effectively followed by the agent, i.e. it is directly used to choose actions in the environment.
 \end{enumerate}
 
 The class of algorithms which uses a behaviour policy $\mu$ in order to learn about a \emph{separate} target policy $\pi$ is called \textbf{off-policy}.
