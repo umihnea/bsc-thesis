@@ -5,6 +5,17 @@
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \setlength{\headheight}{15pt}
 
+% hyperref
+% source: timmurphy.org/2014/03/11/latex-table-of-contents-with-clickable-links/
+\usepackage{color}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=blue,
+    urlcolor=red,
+    linktoc=all
+}
+
 % math commands
 \newcommand\given[1][]{\:#1\vert\:}
 \DeclareMathOperator*{\argmax}{\arg\!\max}
@@ -60,7 +71,7 @@ RL has a broad focus -- researchers have trained RL agents to solve a variety of
 Among its applications was the AlphaGo family of Go programs \cite{ago, alpha-zero} which became world renowned after defeating Lee Sedol, 18-times world champion, thus becoming the first computer system achieving superhuman perfomance in the game of Go.
 
 However, a multitude of interesting results in this field focuses on agents learning in video games or other game-like environments.
-In \emph{Mnih et al.}'s 2013 \emph{Atari DQN} paper \cite{atari-dqn} (which is covered in this work), the DeepMind team proposes a method to train agents to learn how to play Atari video games exclusively from raw video input.
+In \emph{Mnih et al.}'s 2013 \emph{Atari DQN} paper \cite{atari-dqn} (which is covered in this work), the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
 
 Despite seeming like a toy problem, learning to solve virtual environments from raw sensory input provides insight about complex, real-world environments which require real-time intelligent control, such as self-driving cars.
 
