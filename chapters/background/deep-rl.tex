@@ -4,7 +4,7 @@ This led to the expansion of the field, marking the birth of \textbf{deep reinfo
 Classic RL assumes that the state space is finite and can be modeled in a tabular manner.
 However, we seldom encounter real-world, interesting problems where this assumption holds.
 Deep RL is an open field striving to solve \emph{more complex} problems than classical methods allow.
-This is done through the ability of functional approximators to model high-dimensional spaces.
+This is done by leveraging the ability of functional approximators to model high-dimensional spaces.
 
 The field has recently surged, after a series of new algorithms and succesful applications were published.
 In this chapter, we try to give an overview of the main methods of learning but mainly focus on developing \emph{Mnih et al.'s \textbf{DQN} (2013)} \cite{atari-dqn}.
@@ -24,7 +24,7 @@ ConvNets exploit the \textbf{spatial nature} of the data.
 This property makes them especially useful over a vast spectrum of problems, such as image classification, audio signal processing, analyzing financial time-series etc.
 Among those, image classification tasks are the primary reason for the architecture's popularity.
 
-The \textbf{origin} of convolutional networks can be traced back to Kunihiko Fukushima's \emph{neocognitron} (1979).
+The \textbf{origin} of CNNs can be traced back to Kunihiko Fukushima's \emph{neocognitron} (1979).
 Kunihiko’s design \cite{neocognitron-paper} was itself inspired by earlier breakthroughs in neuroscience -- namely studies of the visual cortex of mammals (Hubel \& Wiesel, 1959).
 LeCun et al. (1989) further improved Kunihiko’s model by introducting backpropagation training, which set the standard for today’s architectures.
 
@@ -52,7 +52,7 @@ The spatial dimensions map exactly to the width and height of an image, and each
 
 
 \subsubsection{The Convolutional Stage}
-This stage performs the convolution operation which is the most computationally demanding procedure of the layer.
+This stage performs the convolution operation, which is the most computationally demanding procedure of the layer.
 The output from this stage is a \textbf{feature map} of the input, which is then passed as linear activation to the detector stage, likewise to fully-connected feedforward networks.
 
 This \textbf{operation} consists of sliding a \emph{kernel} over the input.
@@ -123,7 +123,7 @@ Other attempts have relied on \textbf{autoencoders}\footnotemark{} as a preproce
 
 This section introduces \emph{Mnih et al.}'s \textbf{DQN} \cite{atari-dqn}, a deep model-free learning method that uses \textbf{automatic feature extraction} (i.e., is capable of finding an efficient representation directly from interactions with the environment).
 
-The paper benchmarks its approach on 49 video games for the Atari 2600, using the Atari Learning Environment (ALE) \cite{ale-paper} -- an extension on top of an Atari emulator, designed to transform \emph{games} into \emph{task environments}.
+The paper benchmarks its approach against a set of 49 video games for the Atari 2600, using the Atari Learning Environment (ALE) \cite{ale-paper} -- an extension on top of an Atari emulator, designed to transform \emph{games} into \emph{task environments}.
 The selection features diverse mechanics, with some games requiring agents to develop long-term strategies to perform reasonably well at.
 
 The researchers trained agents separately for each game using the same architecture and hyperparameters.
@@ -249,16 +249,16 @@ For this, we move our current set of weights \emph{slightly} (i.e., the extent i
 Methods which follow this schema, regardless of whether or not they use an additional value function, are considered \textbf{policy gradient methods} \cite{rlai}.
 The hat over $\nabla_{\theta_{t}} J(\theta_{t})$ in (\ref{eqn:pg-general-rule}) symbolizes that the term can in fact be an \textbf{estimator} of the gradient term. The methods of estimation differ.
 
-The performance of a policy generally depends on $\theta$ in two ways:
+The performance of a policy generally depends on two things:
 \begin{itemize}
     \item It \emph{directly} depends on how $\pi_{\theta}$ selects actions.
     \item It \emph{indirectly} depends on the distribution of the states in which those actions are taken.
 \end{itemize}
-Considered independently, action selection's influence on $\theta$ can be clearly observed.
-Given a state $s$, the direct effect of $\theta$ on actions can be observed directly by looking at obtained rewards.
-In the latter case, the effect our policy has on the state distribution depends on the environment and is generally \emph{unknown} \cite{rlai}.
+Considered independently, $\theta$'s influence on action selection can be clearly observed observed directly by looking at obtained rewards.
+However, the state distribution and the way in which it is influenced by our choice of $\theta$ depends on the environment and is generally unknown \cite{rlai}.
 
 The \textbf{policy gradient theorem} (PCT) provides an expression for the gradient of the performance with regard to its arguments which does not depend on the state distribution \cite{rlai}.
+This allows us to tweak the parameters independent of any influence from the environment.
 The expression is given in (\ref{eqn:pg-theorem}) for the episodic case.
 \begin{equation} \label{eqn:pg-theorem}
     \nabla_{\theta} J(\theta) \propto
@@ -273,7 +273,7 @@ The expression is given in (\ref{eqn:pg-theorem}) for the episodic case.
 \textbf{Monte Carlo policy gradients} (also referred to as REINFORCE in the literature) are the simplest practical application of policy gradients.
 
 In order to fit into the general framework described by (\ref{eqn:pg-general-rule}), we need a way to draw samples such that the expectation of the sample gradient is proportional to $\nabla_{\theta} J(\theta)$ \cite{rlai}.
-This algorithm relies on Monte Carlo methods in order to estimate said gradient.
+This algorithm relies on Monte Carlo to estimate said gradient, similar to how we approximated the value function for each state by averaging over samples of episodic returns in the classical setting.
 
 The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of assumptions (the explanation of which are out of the scope of this paper) in order to reach the form presented below.
 \begin{equation}
@@ -293,10 +293,10 @@ The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of 
 The actor and the critic are generally learned independently but occasionally may share parameters, depending on the algorithm.
 The key point is that the actor updates its policy parameters in the direction indicated by the critic’s computation of the value function.
 
-% Actor-critic methods are desirable because you can basically perform one-step (or n-step) bootstrapping
-% The most basic algorithm computes TD-error \delta using its approx. value function, then both the value function and the policy are adjusted in that direction
+Actor-critic methods are desirable because they can leverage the ability of value function approximators to perform \textbf{bootstrapping}.
+The most basic actor-critic algorithm computes the TD error $\delta$ for its value function, as discussed in TD(0), to adjust both the value function and the policy in the direction the error determines.
 
-Actor-critic methods are considered an important advance in deep RL research.
+Actor-critic methods are considered an important advancement in deep RL research.
 Among its more well recognized algorithms is \textbf{asyncronous advantage actor-critic} or \textbf{A3C}, invented by \emph{Mnih et al.} in 2016 \cite{a3c-paper}.
 The paper proposes an algorithm designed for parallel procesing.
 In particular, the architecture features multiple actors which are trained in parallel, while critics (to whom the actors report) construct approximations of the value function from the their experiences.
