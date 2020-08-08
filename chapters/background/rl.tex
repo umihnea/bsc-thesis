@@ -2,7 +2,7 @@
 RL is unique within its field as it is directly focused on goal-directed learning from agent-environment interaction \cite{rlai}.
 At the core of RL lays the reward function (or signal), which perfectly describes goals established by the problem.
 
-In the following chapter, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this paper.
+In the following chapter, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this thesis.
 
 In section \ref{rl:dp} we cover the first solution technique: using dynamic programming in a known, finite MDP to find its optimal solution.
 In section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte Carlo learning.
@@ -94,7 +94,7 @@ More explicitly, it gives the expected return of starting in state $s$ and takin
     Q^{\pi}(s, a) = \mathbb{E}_{\pi}\{ G_t \given S_t = s, A_t = a \}
 \end{equation}
 
-Action-value functions are especially important in \textbf{model-free methods} (see \emph{Models} in Section \ref{rl:model}), which are predominantly the focus of this paper.
+Action-value functions are especially important in \textbf{model-free methods} (see \emph{Models} in Section \ref{rl:model}), which are predominantly the focus of this thesis.
 In model-based algorithms, the value function $v$ can uniquely determine a policy: we can simply pick the best reward-state pair.
 This naturally requires knowing the full dynamics of the MDP (knowing all successor states of $s$).
 
@@ -290,7 +290,7 @@ Under an $\varepsilon$-greedy policy, $\varepsilon \in (0, 1]$ is the probabilit
 \textbf{Temporal-difference (TD) learning} is a class of model-free algorithms that are able to learn from incomplete episodes.
 Compared to Monte Carlo, TD methods (being model-free) similarly learn by sampling from the environment, but differ through the fact that they do not require complete episodes of experience.
 
-There exist advanced generalizations of the simple TD algorithm, such as TD($\lambda$), but they are outside the scope of this paper.
+There exist advanced generalizations of the simple TD algorithm, such as TD($\lambda$), but they are outside the scope of this thesis.
 Here we will only cover the case of one-step TD learning, known in \cite{rlai} as TD(0).
 
 \subsubsection{Bootstrapping}

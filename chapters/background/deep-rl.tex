@@ -275,7 +275,7 @@ The expression is given in (\ref{eqn:pg-theorem}) for the episodic case.
 In order to fit into the general framework described by (\ref{eqn:pg-general-rule}), we need a way to draw samples such that the expectation of the sample gradient is proportional to $\nabla_{\theta} J(\theta)$ \cite{rlai}.
 This algorithm relies on Monte Carlo to estimate said gradient, similar to how we approximated the value function for each state by averaging over samples of episodic returns in the classical setting.
 
-The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of assumptions (the explanation of which are out of the scope of this paper) in order to reach the form presented below.
+The update rule is based on PCT in (\ref{eqn:pg-theorem}) and makes a series of assumptions (the explanation of which are out of the scope of this thesis) in order to reach the form presented below.
 \begin{equation}
     \theta \leftarrow \theta + \alpha \gamma^{t} G_{t} \nabla_{\theta} \ln{\pi_{\theta}(A_{t} \given S_{t})}
 \end{equation}
