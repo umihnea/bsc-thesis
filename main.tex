@@ -39,22 +39,108 @@
 
 \usepackage[nottoc]{tocbibind}
 
-\title{
-    {Using Deep Q-networks to learn Pacman}\\
-    {\large Babeș-Bolyai University}\\
-    {
-        \begin{figure}[h]
-            \includegraphics[width=5cm]{logo_cs.png}
-            \centering
-        \end{figure}
-    }
-}
-\author{Mihnea Ungureanu}
-\date{June 2020}
+% For blank pages
+% solution detailed here https://tex.stackexchange.com/a/36881
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
 
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+    \center % Center everything on the page
+
+    % University, Faculty and Specialization
+    {\scshape\LARGE Babeş-Bolyai University Cluj-Napoca \par}
+    \vspace{0.125cm}
+    {\scshape\LARGE Faculty of Mathematics and Computer Science\par}
+    \vspace{0.125cm}
+    {\scshape\LARGE Specialization Computer Science\par}
+    \vspace{5cm}
+
+    % Title section
+    {
+        \bfseries
+        \LARGE \uppercase{Diploma Thesis} \\[1.5cm]
+        \huge Using Deep Q-networks to learn Pacman
+    }\\[4cm]
+
+    % Author and Supervisor
+    \begin{flushleft}
+        \Large
+            \textbf{Supervisor}
+            \vspace{0.2cm}\\
+        \Large
+            Lect. Ph.D. Radu D. Găceanu
+            \vspace{0.125cm}\\
+    \end{flushleft}
+
+    \begin{flushright}
+        \Large
+            \textbf{Author}
+            \vspace{0.2cm}\\
+        \Large
+            Mihnea Ungureanu
+    \end{flushright}
+
+    \vfill
+
+    % Year
+    {\center \large 2020}
+\end{titlepage}
+
+% A blank page is required
+% The blankpage custom command is defined above 
+\blankpage
+
+% Romanian title page
+\begin{titlepage}
+    \center % Center everything on the page
+    
+    % University, Faculty and Specialization
+    {\scshape\LARGE Universitatea Babeş-Bolyai Cluj-Napoca \par}
+    \vspace{0.125cm}
+    {\scshape\LARGE Facultatea de Matematică şi Informatică \par}
+    \vspace{0.125cm}
+    {\scshape\LARGE Specializarea Informatică Engleză \par}
+    \vspace{5cm}
+    
+    % Title section
+    {
+        \bfseries
+        \LARGE LUCRARE DE LICENȚĂ \\[1.5cm]
+        \huge Folosind Deep Q-networks pentru a învăța Pacman
+    }\\[4cm]
+    
+    % Author and Supervisor
+    \begin{flushleft}
+        \Large
+            \textbf{Conducător științific}
+            \vspace{0.2cm}\\
+        \Large
+            Lect. dr. Radu D. Găceanu
+            \vspace{0.125cm}\\
+    \end{flushleft}
+    
+    \begin{flushright}
+        \Large
+            \textbf{Absolvent}
+            \vspace{0.2cm}\\
+        \Large
+            Mihnea Ungureanu
+    \end{flushright}
+    
+    \vfill
+    
+    % Year
+    {\center \large 2020}
+    
+\end{titlepage}
+
+\blankpage
 
 \chapter*{Abstract}
 In this paper, we use \textbf{reinforcement learning (RL)} methods to train an autonomous agent to behave optimally in a video game environment.
@@ -63,7 +149,12 @@ In order to train our agent, we use a method similar to the one described in the
 We elaborate on the theoretical framework on which the paper is built.
 Finally, we describe our working implementation of the algorithm and document the results.
 
-\chapter*{Introduction}
+
+% ToC placed between abstract and introduction
+\tableofcontents
+
+
+\chapter{Introduction}
 Over the relatively recent years, \textbf{reinforcement learning (RL)} has gained immense popularity.
 Stemming from the agent-based approach to artificial intelligence, RL is a unique paradigm within its field.
 
@@ -74,8 +165,6 @@ However, a multitude of interesting results in this field focuses on agents lear
 In \emph{Mnih et al.}'s 2013 \emph{Atari DQN} paper \cite{atari-dqn} (which is covered in this work), the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
 
 Despite seeming like a toy problem, learning to solve virtual environments from raw sensory input provides insight about complex, real-world environments which require real-time intelligent control, such as self-driving cars.
-
-\tableofcontents
 
 \chapter{Background}
 \input{chapters/background}
