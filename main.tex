@@ -143,12 +143,27 @@
 \blankpage
 
 \chapter*{Abstract}
-In this thesis, we use \textbf{reinforcement learning (RL)} methods to train an autonomous agent to behave optimally in a video game environment.
-We choose to solve \emph{Pacman}, for its simple mechanics but potentially complex situations that can emerge.
-In order to train our agent, we use a method similar to the one described in the Atari DQN paper \cite{atari-dqn}.
-We elaborate on the theoretical framework on which the paper is built.
-Finally, we describe our working implementation of the algorithm and document the results.
+This thesis presents an autonomous agent capable of learning optimal behaviour in video game environments.
 
+We focus on a variant of the famous arcade game \emph{Pacman}, due to its high potential as a research tool in the study of intelligent agents, as well as intuitive appeal for human players.
+
+Despite seeming like a toy problem, learning to solve virtual environments provides insight into complex, real-world environments at an insignificant fraction of the cost of running realistic simulations.
+
+The main purpose of this thesis is to implement, test and analyze results of different algorithms for autonomous learning and select the most performant approach at playing \emph{Pacman}.
+A secondary aim is to test whether Pacman is a strong benchmark environment in \textbf{reinforcement learning (RL)} and search for challenges which would allow researchers to gain further insight into AI agents.
+
+The theoretical part of this thesis starts by exploring classical \textbf{reinforcement learning} techniques, then transitions to modern approaches which leverage \textbf{artificial neural networks (ANNs)} as functional approximators for RL.
+
+The practical part consists of multiple algorithm implementations, as well as a light framework for training, evaluating and benchmarking the performance of RL agents.
+The provided agents include a replication of DeepMind’s \textbf{deep  Q-learning} strategy \cite{atari-dqn}, as well as more performant successors to the original paper: DDQN \cite{ddqn-paper} and Prioritized Experience Replay \cite{per-paper}.
+
+The agents are implemented using PyTorch, a powerful Python machine learning library based on Torch. We also use the Atari toolkit from OpenAI Gym, which was designed for RL and provides interfaces to keep track of in-game score, lives and other indicators.
+
+\hfill \break
+This work is the result of my own activity. I have neither given nor received unauthorised assistance on this work.
+\begin{flushright}
+    Mihnea Ungureanu
+\end{flushright}
 
 % ToC placed between abstract and introduction
 \tableofcontents
