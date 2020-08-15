@@ -1,27 +1,43 @@
-In this chapter, 
+In this chapter, we focus on \emph{Pacman} as learning environment and on our collection of agent programs based on deep Q-learning.
 
-\section{Modelling the Problem}
+The project itself consists of a light framework for training, running and evaluating RL agents.
+Our framework is compatible with various other environments, as long as they respect the interface provided by OpenAI Gym.
+The feature set includes automatic checkpoints, cloud-friendly deployment and a performance analysis toolkit.
+
+In Section \ref{section:modelling-the-problem}, we justify why we choose to study the game of \emph{Pacman} and formalize the specifications of it as a learning environment.
+
+In Section \ref{section:approach-algorithms}, we introduce some of the algorithms built into our collection of autonomous agents.
+The main method is vanilla DQN, which was covered previously in Section \ref{section:dqn}.
+However, in this section, we present two important improvements over it -- Double DQN and Prioritized Experience Replay.
+
+In Section \ref{section:implementation}, we take a look at each subcomponent of an individual agent program and map each one to notions from our previous chapter.
+Each agent has its own module and inherits a specific structure from a prototype.
+
+In Section \ref{section:technologies}, we present a rundown of our technology stack, whose core is the Python programming language. The framework is built on the PyTorch machine learning library but makes use of many other ML and data science libraries.
+
+We wrap up this chapter with Section \ref{section:user-manual} which consists of a short instruction manual for users to start local or remote training sessions, use the provided performance measurement tools and extend the existing collection of agents.
+
+\section{Modelling the Problem} \label{section:modelling-the-problem}
 % What is Pacman (with a screenshot)
 % Explain the game structure and objectives
 % Why is the game useful as a benchmark?
 % Extension possibilities
 
-\section{Algorithms}
+\section{Algorithms} \label{section:approach-algorithms}
 % detail DQN, including details of the neural network structure
 % present PER and DDQN
 
-\section{Agent Design}
+\section{Agent Design} \label{section:agent-design}
 % show a conceptual overview of each high-level moving part
 % and how they communicate
 
-\section{Implementation}
+\section{Implementation} \label{section:implementation}
 % Trainer class as an entry point
 % show the class diagram and explain more low-level details
 
-\section{User Manual}
+\section{Technologies} \label{section:technologies}
 % PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab
 % In the future, TensorBoard
 
-\section{Technologies}
-% PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab
-% In the future, TensorBoard
+\section{User Manual} \label{section:user-manual}
+% Commands for training, running, deploying, flags and configuration variables
