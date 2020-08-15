@@ -2,11 +2,11 @@
 RL is unique within its field as it is directly focused on goal-directed learning from agent-environment interaction \cite{rlai}.
 At the core of RL lays the reward function (or signal), which perfectly describes goals established by the problem.
 
-In the following chapter, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this thesis.
+In the following section, we start by summarizing finite MDPs -- the mathematical underpinning for reinforcement learning, while also familiarizing with the the notation used throughout this thesis.
 
-In section \ref{rl:dp} we cover the first solution technique: using dynamic programming in a known, finite MDP to find its optimal solution.
-In section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte Carlo learning.
-In section \ref{rl:td}, we visit temporal-difference learning and finally develop our solution using Q-learning in section \ref{rl:q-learning}.
+In Section \ref{rl:dp} we cover the first solution technique: using dynamic programming in a known, finite MDP to find its optimal solution.
+In Section \ref{rl:mc}, we generalize this method to solve unknown MDPs -- the complete formulation of a RL problem -- using Monte Carlo learning.
+In Section \ref{rl:td}, we touch on temporal-difference (TD) learning. Finally, we present Q-learning -- a fundamental algorithm we reference to throughout this thesis -- in Section \ref{rl:q-learning}.
 
 \subsection{Components and Notation}
 Introduction into reinforcement learning supposes familiarity with the paradigm's simple-but-effective mathematical framework.
@@ -144,7 +144,7 @@ They form the basis for solving an MDP, whether known or unknown.
 
 Equation \ref{eqn:bellman-expectation} states the \textbf{Bellman expectation equation}.
 The key idea behind this class of Bellman equations is that they express the value of a state as expected sum of immediate reward of being in that state,  plus discounted value of successor state.
-This transformation becomes clear if we use our return-based exprimation of value function $V^{\pi}(s)$ in Equation \ref{eqn:value} and reorganize its terms:
+The transformation becomes clear if we use the return-based exprimation of value function $V^{\pi}(s)$ in Equation \ref{eqn:value} and reorganize its terms:
 
 \begin{equation} \label{eqn:bellman-expectation}
 \begin{aligned}
@@ -155,7 +155,7 @@ This transformation becomes clear if we use our return-based exprimation of valu
 \end{aligned}
 \end{equation}
 
-In Figure \ref{fig:expectation-backup}, we model the equation using a backup tree\footnote{Called a backup or update tree, it visualizes the way that state values are updated. This visualization convention is proposed in and used throughout \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
+In Figure \ref{fig:expectation-backup}, the equation is represented as a backup tree\footnote{A \textbf{backup tree} or \textbf{update tree} models the way in which state values are updated. This visualization convention is proposed in and used throughout ``Reinforcement Learning: An Introduction'' \cite{rlai}.}, where each open circle represents a state, while closed cicles represent state-action pairs.
 
 In state $s$, the agent has a set of available actions according to its policy $\pi$.
 After the agent chooses action $a$, the environment responds with reward $r$ and throws the agent into the next state  $s'$ -- one of multiple possible states according to environment dynamics.
