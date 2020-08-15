@@ -157,7 +157,8 @@ The theoretical part of this thesis starts by exploring classical \textbf{reinfo
 The practical part consists of multiple algorithm implementations, as well as a light framework for training, evaluating and benchmarking the performance of RL agents.
 The provided agents include a replication of DeepMind’s \textbf{deep  Q-learning} strategy \cite{atari-dqn}, as well as more performant successors to the original paper: DDQN \cite{ddqn-paper} and Prioritized Experience Replay \cite{per-paper}.
 
-The agents are implemented using PyTorch, a powerful Python machine learning library based on Torch. We also use the Atari toolkit from OpenAI Gym, which was designed for RL and provides interfaces to keep track of in-game score, lives and other indicators.
+The agents are implemented using PyTorch, a powerful Python machine learning library based on Torch. We use the Atari toolkit from OpenAI Gym, which was designed for RL and provides interfaces to keep track of in-game score, lives and other indicators.
+Finally, we analyze our results using Jupyter Notebook, a well-established Python data science tool.
 
 \hfill \break
 This work is the result of my own activity. I have neither given nor received unauthorised assistance on this work.
@@ -165,32 +166,67 @@ This work is the result of my own activity. I have neither given nor received un
     Mihnea Ungureanu
 \end{flushright}
 
+
 % ToC placed between abstract and introduction
 \tableofcontents
 
 
 \chapter{Introduction}
 Over the relatively recent years, \textbf{reinforcement learning (RL)} has gained immense popularity.
-Stemming from the agent-based approach to artificial intelligence, RL is a unique paradigm within its field.
+Stemming from the agent-based approach to artificial intelligence, it is a unique paradigm within the field of machine learning.
+RL directly focuses on building agents that make optimal decisions in an environment in order to maximize a notion of cumulative reward.
+RL has a broad focus and researchers have trained RL agents to solve a variety of tasks.
 
-RL has a broad focus -- researchers have trained RL agents to solve a variety of tasks.
-Among its applications was the AlphaGo family of Go programs \cite{ago, alpha-zero} which became world renowned after defeating Lee Sedol, 18-times world champion, thus becoming the first computer system achieving superhuman perfomance in the game of Go.
+One of the field's most notable achievments is DeepMind's \textbf{AlphaGo} family of Go-playing programs \cite{ago, alpha-zero}.
+Beating humans at Go was widely acknowledged as the next frontier in game-playing AI after the defeat of Gary Kasparov in 1997\footnotemark.
+Go was a natural progression from chess due to its larger state space and higher branching factor.
+In 2016, AlphaGo became world renowned after defeating Lee Sedol, 18-times world champion, thus becoming the first computer system achieving \textbf{superhuman perfomance} in the game of Go.
+\footnotetext{Gary Kasparov, the legendary chess champion, was defeated by IBM chess-playing computer DeepBlue in 1997, marking the first superhuman computer performance in chess.}
 
-However, a multitude of interesting results in this field focuses on agents learning in video games or other game-like environments.
-In \emph{Mnih et al.}'s 2013 \emph{Atari DQN} paper \cite{atari-dqn} (which is covered in this work), the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
+However, a multitude of interesting studies in RL focuses on agents learning in \textbf{video games} or other game-like environments.
+In Mnih et al.'s Atari DQN paper \cite{atari-dqn}, which is covered in this thesis, the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
+The study produced agents able to surpass human-level performance in Breakout, Enduro and Pong.
+More importantly, it inspired a long chain of attempts of the research community to improve the original algorithm and beat the records it set.
+% Starcraft II and Dota 2
 
-Despite seeming like a toy problem, learning to solve virtual environments from raw sensory input provides insight about complex, real-world environments which require real-time intelligent control, such as self-driving cars.
+This thesis aims to explore a challenging video game environment by analyzing the performance of existing algorithms in order to discover potentially underexplored areas in the design of AI agents.
+We hope to outline some limitations of the current standards in order to benefit the further development of this field.
 
-\chapter{Background}
+Toy problems such as playing video games from raw sensory input are the training ground which precedes real-world environments which require real-time intelligent control, such as self-driving cars.
+Innovation in AI, as in all domains, begins at a small scale.
+
+In order to accomplish our objective, we aim to build an agent framework that provides intuitive yet easily extensible tools, a solid testbed for experiments and means of data analysis.
+
+Our choice for an environment for studying agents is a variant of popular arcade video game \emph{Pacman}, developed and released by Namco Ltd. in 1980.
+This choice is motivated by two factors: the potential challenges it poses to AI and its fun and intuitive appeal for humans.
+The game is challenging for AI agents because it involves balancing the goal of exploration and point acquisition with escaping different classes of enemies that chase the player.
+
+This thesis can be roughly divided into a theoretical part which is compact and contained entirely within one exhaustive chapter, and a practical part, composed of an application chapter followed by an analysis of the obtained results.
+
+\emph{Chapter \ref{chapter:background}, ``Background''} presents a comprehensive overview of the theory necessary to understanding reinforcement learning.
+We start by introducing agent-based AI, then continue with a
+section dedicated to understanding fundamental concepts in RL.
+The second half of the chapter is dedicated to deep reinforcement learning, which can roughly be defined as combination of classic RL and neural networks.
+Among the topics covered in the second half are convolutional neural networks (ConvNets) and some proeminent solution methods in deep RL.
+
+\emph{Chapter \ref{chapter:practical}, ``Playing Pacman using Deep Q-learning''} states the problem and presents the chosen algorithms for our agents.
+In particular, we present deep Q-networks (DQN) and two of its derviatives -- double DQN and prioritized experience replay.
+Furthermore, we go in-depth over the structure of the framework and its implementation.
+
+\emph{Chapter \ref{chapter:results}, ``Results and Evaluations''} presents our methods of measuring the performance of the agents and analyzes the obtained data of our various experiments.
+
+In our ending chapter, \emph{Chapter \ref{chapter:conclusion}, ``Conclustion and Future Work''}, we sum up our methods and results and we identify future areas of improvement. Additionally, we try to predict the direction of RL research based on our conclusions.
+
+\chapter{Background} \label{chapter:background}
 \input{chapters/background}
 
-\chapter{Our Approach}
+\chapter{Playing Pacman using Deep Q-learning} \label{chapter:practical}
 \input{chapters/approach}
 
-\chapter{Results and Evaluations}
+\chapter{Results and Evaluations} \label{chapter:results}
 \input{chapters/results}
 
-\chapter{Conclustion and Future Work}
+\chapter{Conclustion and Future Work} \label{chapter:conclusion}
 \input{chapters/conclusion}
 
 \bibliography{references}
