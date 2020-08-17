@@ -18,10 +18,55 @@ In Section \ref{section:technologies}, we present a rundown of our technology st
 We wrap up this chapter with Section \ref{section:user-manual} which consists of a short instruction manual for users to start local or remote training sessions, use the provided performance measurement tools and extend the existing collection of agents.
 
 \section{Modelling the Problem} \label{section:modelling-the-problem}
-% What is Pacman (with a screenshot)
-% Explain the game structure and objectives
-% Why is the game useful as a benchmark?
+The problem we solve in this thesis is three-fold.
+Firstly, we specify a variant of a task environment for \emph{Pac-Man}, defining goals and rewards to view it through the lens of reinforcement learning.
+Secondly, we train agents to ``solve’’ that environment, i.e. explore and learn to take optimal decisions to achieve the established goals.
+And lastly, we compare agents based on their how close they were to their goals, what their mean reward was and how stable was their learning process.
+
+\textbf{\textit{Pac-Man}} is a classic video game developed by Toru Iwatani and published by Namco Ltd. in 1980 \cite{pacman-in-academia}.
+The game was originally released as an arcade game and it quickly became the most commercially sucessful arcade game ever created.
+The original hit gave rise to a series of ``licensed clones'', which targeted a number of popular platforms, such as the Atari 2600, the Nintendo Entertainment System (NES), the Nintendo GameBoy, etc.
+Besides its commercial success, \emph{Pac-Man} has been an appealing object of study for academia, across a number of fields, ranging from psychology to mathematics and computational intelligence \cite{pacman-in-academia}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{nes-pac-man.jpg}
+    \caption{Screen capture of the starting configuration from Nintendo's NES variant of the game.}
+    \label{fig:pac-man-screen}
+\end{figure}
+
+The game's mechanics are intuitive but demanding enough to be fun.
+It allows simple four-directional movement.
+The player is represented as a yellow character with a distinctive circular shape (with a ``missing slice''\footnotemark{} representing its mouth).
+\footnotetext{Iwatani's stated inspiration for Pac-Man's design was a pizza with a missing slice. \cite{pacman-gameinformer}}
+The board is a bidimensional maze, featuring tunnels which loop around each other, i.e. entering a tunnel on one side will transport the player out through the opposite side of the board.
+\textbf{Pellets} (or \emph{dots}) are placed at almost every position, and the goal of every level is to collect all pellets.
+Most renditions of the game feature four \textbf{ghosts} (faithful to the original), which will chase the player around the board.
+Collisioning with any of the ghosts results in losing a life and being repositioned to the start (without losing progress on dots).
+The ghosts have different ``personalities'' -- each of them has a different approach for chasing Pac-Man.
+There are special power pellets in each of the four corners (seen in Figure \ref{fig:pac-man-screen}).
+\textbf{Power pellets} grant Pac-Man temporary immunity from ghosts and changes the power dynamic in the game for a short time: the ghosts enter \textbf{``scared'' mode} and reverse their direction to run away.
+In this mode, the player gets an increasing score for every ghost it eats.
+
+\emph{Pac-Man} can be defined as a 2D gridworld environment, where exploration is necessary to reach the goal.
+This class of task environments is common throughout RL literature and has some common properties:
+\begin{itemize}
+    \item they have discrete bidimensional representation;
+    \item an agent has a finite set of options at every time step.
+\end{itemize}
+
+\textbf{Gridwords} are used in literature to clearly define and \textbf{isolate} agent goals.
+A simplistic environment with a clear task is also beneficial for agent learning due to its low degree of environmental noise -- it does not ``distract'' the agent.
+The ease of customizability of the rules inside a gridworld allows creating interesting strategy games to test agents’ decision-making capabilities.
+New non-trivial grid-based environments are an area of open research -- for example, the \emph{Pommerman} benchmark \cite{pommerman-paper} has been formulated as a novel interesting multi-agent problem which does not yet have an optimal solution.
+
+% Why is it convenient for us?
+
+% Reward function
+
 % Extension possibilities
+% - random generation
+% - multi-agent potential
 
 \section{Algorithms} \label{section:approach-algorithms}
 % detail DQN, including details of the neural network structure
