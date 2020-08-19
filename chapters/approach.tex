@@ -17,6 +17,8 @@ In Section \ref{section:technologies}, we present a rundown of our technology st
 
 We wrap up this chapter with Section \ref{section:user-manual} which consists of a short instruction manual for users to start local or remote training sessions, use the provided performance measurement tools and extend the existing collection of agents.
 
+\clearpage
+
 \section{Modelling the Problem} \label{section:modelling-the-problem}
 The problem we solve in this thesis is three-fold.
 Firstly, we specify a variant of a task environment for \emph{Pac-Man}, defining goals and rewards to view it through the lens of reinforcement learning.
@@ -28,14 +30,14 @@ The game was originally released as an arcade game and it quickly became the mos
 The original hit gave rise to a series of ``licensed clones'', which targeted a number of popular platforms, such as the Atari 2600, the Nintendo Entertainment System (NES), the Nintendo GameBoy, etc.
 Besides its commercial success, \emph{Pac-Man} has been an appealing object of study for academia, across a number of fields, ranging from psychology to mathematics and computational intelligence \cite{pacman-in-academia}.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.4\textwidth]{nes-pac-man.jpg}
     \caption{Screen capture of the starting configuration from Nintendo's NES variant of the game.}
     \label{fig:pac-man-screen}
 \end{figure}
 
-The game's mechanics are intuitive but demanding enough to be fun.
+The game's mechanics are intuitive but engaging enough to be fun.
 It allows simple four-directional movement.
 The player is represented as a yellow character with a distinctive circular shape (with a ``missing slice''\footnotemark{} representing its mouth).
 \footnotetext{Iwatani's stated inspiration for Pac-Man's design was a pizza with a missing slice. \cite{pacman-gameinformer}}
@@ -60,13 +62,31 @@ A simplistic environment with a clear task is also beneficial for agent learning
 The ease of customizability of the rules inside a gridworld allows creating interesting strategy games to test agents’ decision-making capabilities.
 New non-trivial grid-based environments are an area of open research -- for example, the \emph{Pommerman} benchmark \cite{pommerman-paper} has been formulated as a novel interesting multi-agent problem which does not yet have an optimal solution.
 
-% Why is it convenient for us?
+\emph{Pac-Man} has a few advantages which make it interesting to study from a RL perspective.
 
-% Reward function
+First of all, it provides a \textbf{shaped reward} built-into the game mechanics.
+In reinforcement learning, a \textbf{sparse reward} is a large reward which is delayed for a relatively large number of steps.
+A sparse reward would be, for example, if we would only reward the agent at the end of the game.
+Shaped rewards, in contrast, equate with providing gradual feedback to the agent.
+This can improve learning and lead to better outcomes earlier in training, as good behaviours become immediately obvious to the agent.
 
-% Extension possibilities
-% - random generation
-% - multi-agent potential
+In \emph{Pac-Man}, the pellets, placed uniformly over the board, provide a shaped reward which directly reflects the goal of the game, i.e. to eat all pellets on a board without getting caught.
+Moreover, they \textbf{incentivize exploration} as the reward is higher in places the agent has not visited before.
+
+Second of all, \emph{Pac-Man} requires the agent to develop non-trivial strategies.
+The game requires balancing two equally important subgoals: fully covering the game board to consume every available pellet, and running away from the chasing ghosts.
+This gives rise to complex and potentially problematic situations for the player, which require \textbf{planning}.
+This raises an interesting question regarding the potential of existing algorithms to learn \textbf{long-term strategies} similar in performance to human players.
+
+The \textbf{reward function} we use in this thesis for our \emph{Pac-Man} environment is a combination of a few properties of the environment state.
+The most important component is the \textbf{score}.
+Score changes will determine a proportional reward for the agent.
+Significant score increases are provided by eating pellets but a more interesting mechanic is eating ghosts when the player is invincible.
+Each ghost eaten will provide a higher reward, thus conditioning the agent to chain as many ``kills'' as possible.
+Typical of arcade games, the mechanics are built such that the score can \emph{only increase} over time.
+This creates a necessity to \emph{counterbalance} by finding opportunities for \textbf{punishment}.
+We choose to strongly penalize the the agent for losing a life.
+There are other possible candidates for ``punishment'' events, but we consider ``death on ghost contact'' to be the most important for capturing the goal of the game.
 
 \section{Algorithms} \label{section:approach-algorithms}
 % detail DQN, including details of the neural network structure
