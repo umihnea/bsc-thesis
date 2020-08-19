@@ -89,16 +89,42 @@ We choose to strongly penalize the the agent for losing a life.
 There are other possible candidates for ``punishment'' events, but we consider ``death on ghost contact'' to be the most important for capturing the goal of the game.
 
 \section{Algorithms} \label{section:approach-algorithms}
-% detail DQN, including details of the neural network structure
-% present PER and DDQN
+In this section, we present the main algorithms powering the autonomous agents evaluated in this thesis. In our collection, \textbf{vanilla DQN} serves both as a stand-alone implementation, as well as a fundamental building block of more advanced algorithms.
+The original DQN, however, is already covered by Section \ref{section:dqn} of our theory chapter and we will omit it here for conciseness.
+Instead, this section deals with \textbf{double DQN} and \textbf{prioritized experience replay (PER)}, both of which address shortcomings of the original algorithm.
 
-\section{Agent Design} \label{section:agent-design}
-% show a conceptual overview of each high-level moving part
-% and how they communicate
+\subsection{Double Q-learning}
+Double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
+The study determines that general Q-learning (and, by extension, deep Q-learning) suffers from a problem known as a \textbf{maximization bias} and adapts the original algorithm to account for this and counteract the bias.
+
+Stated simply, a \textbf{maximization bias} is an implicit preference of the algorithm to overestimate values, despite divergence from the true value.
+Some control algorithms, such as Q-learning, fundamentally depend on using the maximum over estimated values as an estimate for the maximum value \cite{rlai}.
+This leads to situations where noisy reward signals, prevalent in real-world environments, can significantly destabilize learning and slow down training progress.
+
+Hasselt proposes \emph{double learning} to counteract this bias.
+This requires two independent approximators of the action-value function -- we will denote them $Q_1$ and $Q_2$.
+At every step, the approximators are \emph{intermittently} used either to pick an action or to estimate its value.
+The paper proves that this decoupling is sufficient to accomplish an unbiased estimation.
+Which function serves which role can be chosen uniformly at random at every learning step at practically no cost.
+Equation \ref{eqn:double-learning-rule} states the double learning \textbf{update rule}, considering the situation in which $Q_1$ picks the action (and is updated) while $Q_2$ gives the estimate which we bootstrap from.
+
+\begin{equation} \label{eqn:double-learning-rule}
+\begin{aligned}
+Q_1(S_t, A_t) & \leftarrow Q_1(S_t, A_t) \\
+    & + \alpha [ R_{t+1} + \gamma Q_2(S_{t+1}, \argmax_{a \in A} Q_1(S_{t+1}, a)) - Q_1(S_t, A_t)]
+\end{aligned}
+\end{equation}
+
+A drawback of the double learning algorithm is that it requires double the amount of memory of the original. 
+Despite this, it still performs one update per step, so the running time is equivalent to that of its predecessor.
+
+\subsection{Prioritized Experience Replay (PER)}
 
 \section{Implementation} \label{section:implementation}
+% show a conceptual overview of each high-level moving part
+% and how they communicate
 % Trainer class as an entry point
-% show the class diagram and explain more low-level details
+% show the class diagram and explain more low-level details}
 
 \section{Technologies} \label{section:technologies}
 % PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab
