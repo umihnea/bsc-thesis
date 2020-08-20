@@ -117,8 +117,50 @@ Q_1(S_t, A_t) & \leftarrow Q_1(S_t, A_t) \\
 
 A drawback of the double learning algorithm is that it requires double the amount of memory of the original. 
 Despite this, it still performs one update per step, so the running time is equivalent to that of its predecessor.
+% to steal more content space, include and explain the example from RLAI
 
 \subsection{Prioritized Experience Replay (PER)}
+\textbf{Prioritized experience replay} (often shortened as \emph{PER}) is an extension of deep Q-learning, also developed by a team at DeepMind, led by Tom Schaul \cite{per-paper}.
+The paper focuses on improving experience replay from classic DQN.
+
+Recall from Section \ref{section:dqn} the principle of \textbf{experience replay}, which consists of storing all transitions the agent experiences in order to revisit them later during training.
+Reusing experiences over multiple update steps reduces the number of samples required for learning.
+The original approach suggests that the experiences are revisited by sampling them uniformly at random from the replay memory.
+This has the important role of \emph{decoupling} experiences -- which in the case of successive video game frames, are by nature highly correlated -- to avoid introducing \emph{high variance} into the system (which can cause overfitting).
+
+The foundational hypothesis of the paper at \cite{per-paper} is that some transitions have higher ``teaching’’ potential than others.
+The \emph{prioritization} mentioned in the title refers to finding an ordering over experiences which properly reflects this potential.
+The authors chose \emph{absolute TD-error} as a good approximation for utility in learning -- for several reasons.
+Firstly, since larger errors suggests that a prediction is further from the agent’s current expectations, minimizing larger error would naturally improve 
+This supposition has intuitive appeal because \textbf{humans} likewise learn proportionally more from experiences that contradict their existing beliefs the most.
+Additionally, TD-error is already computed as part of the normal update cycle in DQN so extending the implementation to PER does not require significant overhaul of the algorithm.
+
+The paper develops two separate models for prioritizing experience based on error.
+Each model specifies how priorities are computed and stored.
+
+\textbf{Rank-based prioritization} involves keeping track of the rank each transition occupies.
+Each transition would thus have an assigned priority of $p = 1 / rank$.
+This requires an additional data structure, capable of online sorting, such as a heap, as some ranks will change at every update step.
+
+Since the replay memory can potentially store millions of transitions, \textbf{optimization} is necessary to prevent severely hindering performance.
+Changing every rank at every update step is impractical and would outweigh the benefits of prioritization.
+In order to mitigate this, the authors propose to only re-evaluate the ranks of transitions in the sampled mini-batch.
+This \textbf{``lazy’’ approach} retains its desirable properties of learning more efficiently than DQN while not adding an insane amount of computation.
+
+\textbf{Proportional prioritization} simply assigns a priority equal to the absolute TD-error plus an $\epsilon$: $p_{i} = |\delta_{i}| + \epsilon$.
+The $\epsilon$ (which should not be confused with our exploration coefficient in $\epsilon$-greedy) is an offset keeping all priorities above $0$.
+
+The second part of the algorithm is common to both models and consists of actually assigning probabilities based on priority and building the distribution over the transitions. The formula in (\ref{eqn:per-probability}) gives an outline of the method.
+
+\begin{equation} \label{eqn:per-probability}
+    P(i) =  \left( \frac{p_i}{\sum_{k}{p_{k}}} \right)^\alpha
+\end{equation}
+
+The $\alpha$ parameter in this equation represents the degree of prioritization, i.e. a higher $\alpha$ will determine a larger difference between the probabilities of any two priorities.
+
+To sample according to the obtained priority, a sum tree is used.
+A \textbf{sum tree} is a type of segment tree -- a tree data structure which stores statistics (minimum, maximum, sum etc.) of its leaf nodes (which also represent an array).
+The structure is designed to compute interval queries, such as the sum between indices $x$ an $y$, in $\mathcal{O}(\log{n})$, while also allowing fast updates to the underlying data.
 
 \section{Implementation} \label{section:implementation}
 % show a conceptual overview of each high-level moving part
