@@ -93,7 +93,7 @@ In this section, we present the main algorithms powering the autonomous agents e
 The original DQN, however, is already covered by Section \ref{section:dqn} of our theory chapter and we will omit it here for conciseness.
 Instead, this section deals with \textbf{double DQN} and \textbf{prioritized experience replay (PER)}, both of which address shortcomings of the original algorithm.
 
-\subsection{Double Q-learning}
+\subsection{Double Q-learning} \label{section:double-dqn}
 Double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
 The study determines that general Q-learning (and, by extension, deep Q-learning) suffers from a problem known as a \textbf{maximization bias} and adapts the original algorithm to account for this and counteract the bias.
 
@@ -119,7 +119,7 @@ A drawback of the double learning algorithm is that it requires double the amoun
 Despite this, it still performs one update per step, so the running time is equivalent to that of its predecessor.
 % to steal more content space, include and explain the example from RLAI
 
-\subsection{Prioritized Experience Replay (PER)}
+\subsection{Prioritized Experience Replay (PER)} \label{section:per}
 \textbf{Prioritized experience replay} (often shortened as \emph{PER}) is an extension of deep Q-learning, also developed by a team at DeepMind, led by Tom Schaul \cite{per-paper}.
 The paper focuses on improving experience replay from classic DQN.
 
@@ -131,7 +131,7 @@ This has the important role of \emph{decoupling} experiences -- which in the cas
 The foundational hypothesis of the paper at \cite{per-paper} is that some transitions have higher ``teaching’’ potential than others.
 The \emph{prioritization} mentioned in the title refers to finding an ordering over experiences which properly reflects this potential.
 The authors chose \emph{absolute TD-error} as a good approximation for utility in learning -- for several reasons.
-Firstly, since larger errors suggests that a prediction is further from the agent’s current expectations, minimizing larger error would naturally improve 
+Firstly, since larger errors suggests that a prediction is further from the agent’s current expectations, minimizing larger errors would naturally improve performance the most.
 This supposition has intuitive appeal because \textbf{humans} likewise learn proportionally more from experiences that contradict their existing beliefs the most.
 Additionally, TD-error is already computed as part of the normal update cycle in DQN so extending the implementation to PER does not require significant overhaul of the algorithm.
 
@@ -156,21 +156,120 @@ The second part of the algorithm is common to both models and consists of actual
     P(i) =  \left( \frac{p_i}{\sum_{k}{p_{k}}} \right)^\alpha
 \end{equation}
 
-The $\alpha$ parameter in this equation represents the degree of prioritization, i.e. a higher $\alpha$ will determine a larger difference between the probabilities of any two priorities.
+The $\alpha$ parameter in this equation represents the degree of prioritization, i.e. a higher $\alpha$ will determine a larger difference between the probabilities of any two consecutive transitions (when ordered by priority).
 
-To sample according to the obtained priority, a sum tree is used.
-A \textbf{sum tree} is a type of segment tree -- a tree data structure which stores statistics (minimum, maximum, sum etc.) of its leaf nodes (which also represent an array).
-The structure is designed to compute interval queries, such as the sum between indices $x$ an $y$, in $\mathcal{O}(\log{n})$, while also allowing fast updates to the underlying data.
+To sample according to the obtained distribuition, a sum tree is used.
+A \textbf{sum tree} is a specialized type of segment tree -- a tree data structure which stores \emph{statistics} (e.g. minimum, maximum, sum etc.) of its leaf nodes.
+The values of the leaf nodes are usually stored in an array.
+The structure is designed to compute interval queries over that array, such as the sum of all values between indices $x$ an $y$, in $\mathcal{O}(\log{n})$, while also allowing fast updates to the underlying data.
 
 \section{Implementation} \label{section:implementation}
+The models and algorithms presented throughout our theory chapter and in the previous section are incorporated into our framework and implemented using Python and the PyTorch machine learning library.
+The framework is divided into several modules which we detail below.
+
+The \verb|common| package contains classes which are shared among all agent implementations, including those concerning training and evaluation, but also configuration, and a checkpoint manager.
+
+Each agent implementation has its own package: \verb|deepq| is the vanilla DQN agent, \verb|per| implements prioritized experience replay (covered in Section \ref{section:per}) on top of the default DQN, and \verb|doubledqn| and \verb|doubledqn_per| are the double Q-learning versions (explained in Section \ref{section:double-dqn}) of the above algorithms.
+We will cover them all at once in Section \ref{section:agent-modules}.
+
+The \verb|replay_memory| package contains the logic used for memorizing transitions (units of agent experience).
+This package is used by all agents to store, sample and replay transitions.
+We are keeping it isolated because it is clearly logically separate and because it is complex on its own.
+
+\verb|ds| is short for ``data structures'' and contains our implementation of the sum tree required by \verb|replay_memory.PrioritizedReplayMemory|.
+
+The \verb|wrappers| package contains a helper class which works as a layer on top of OpenAI Gym to implement a few missing features required to properly run and test agents according to the original papers.
+
+While not a package per se, but kept separately from our training logic, we have our Jupyter notebooks (in \verb|notebooks|).
+We use those to analyze scores, to graph and benchmark agent performance.
+Inside this directory is an isolated \verb|plot| package, custom-built to allow us to work with both data gathered from either a single run or from multiple runs of the same configuration -- this logic is encapsulated in the \verb|SingleRunData| and \verb|MultiRunData| classes.
+
+\subsection{\texttt{Trainer} and \texttt{Evaluator}}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{app-trainer.png}
+        \caption{Class diagram of \texttt{Trainer}.}
+        \label{fig:trainer-diagram}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{app-evaluator.png}
+        \caption{Class diagram of \texttt{Evaluator}.}
+        \label{fig:evaluator-diagram}
+    \end{subfigure}
+\end{figure}
+
+\texttt{Trainer} and \texttt{Evaluator} host the main loop and constitute (separate) entry points into the system.
+The \textbf{trainer} can differ between algorithms and contains more complex procedures overall.
+The \textbf{evaluator} is roughly doing the same thing, but is more universal as it does not need to encapsulate any algorithm-specific logic.
+
+Both systems start by loading the configuration files using the \texttt{ConfigLoader}.
+This is a simple utility class which loads a \texttt{YAML} file into memory, without doing any specific operations.
+After the data is loaded, each level has the responsibility to parse it according to its requirements.
+For example, we generally group hyperparameter data under the \texttt{model} category of a configuration file, representing parameters required to calibrate the algorithm.
+The trainer's job is \textbf{general} -- to redirect the model parameters to the agent -- and thus does not do any parsing by itself.
+It is the agent’s job to parse and validate the data.
+
+For training, we initialize every needed component: agent, environment, checkpoint manager, etc.
+The main loop consists of fetching the current state from the emulator, feeding it to the agent for learning and processing, then playing the agent’s chosen action into the emulator.
+At every iteration, we call the checkpoint manager to check if the current state needs to be saved.
+We also log scores and compute statistics for plotting and checkpointing.
+
+The \texttt{Trainer} class has a \texttt{shutdown} method, which is triggered automatically at the end of training but is also mapped to the \texttt{SIGKILL} signal.
+Training jobs are designed to be able to run for a long time inside a cloud instance, including on preemptible instances\footnotemark{}.
+\footnotetext{relatively low-cost instances which can be terminated at any time if required by the cloud provider.}
+For this reason, it's important to protect training progress and include a soft shutdown sequence.
+The method checkpoints the model, saves statistics (scores, epsilon decay data and memory usage) and compresses everything into a file before terminating.
+
+The \textbf{evaluator} does essentially the same thing as the trainer, without needing to account for checkpointing and agent learning.
+It simply executes as many evaluation runs as is specified by the configuration file and saves the statistics in a similar manner to the trainer.
+An additional job performed by the evaluator is capturing video from inside the emulator and saving it at a specified location.
+
+\subsection{\texttt{CheckpointManager}}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{app-checkpoint-manager.png}
+    \caption{The class diagram of \texttt{CheckpointManager}, next to \texttt{Checkpoint}.}
+    \label{fig:checkpoint-manager}
+\end{figure}
+
+\texttt{CheckpointManager} is a utility class whose purpose is to periodically capture snapshots of the agent model (the neural networks), along with other metadata (training epoch, hyperparameters, etc.) during training.
+The best snapshots from training are used to reconstruct the agent and play the game in the evaluation environment.
+
+Each snapshot file is several megabytes in size and a proper training session usually runs for hundreds of thousands (ideally, millions) of training steps.
+In order to conserve disk space during training, the job of the checkpoint manager is to always compare the snapshots based on a predetermined metric, and to decide which ones to keep and which ones to delete in order to save space.
+The default metric used in this implementation is the average score over the last 100 episodes (an episode in the context of Pac-Man means a full level playthrough from board initialization until a terminal state is reached).
+
+A separate \textbf{``forced'' checkpoint} is taken at the end of training, regardless of the score metric.
+This is done because most algorithms don’t stabilize until the very end of training.
+However, despite more reliably reaching good scores, they are sometimes still lower than previous record high-scores induced by earlier local optima.
+
+The manager is configurable -- its adjustable properties are the checkpoint frequency \texttt{every}, 
+representing the number of steps between two consecutive snapshots, and the allowed capacity
+\verb|max_size|, the maximum number of files it can store during a training run.
+
+\subsection{Agent Modules} \label{section:agent-modules}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{dqn-architecture.png}
+    \caption{High-level architectural view of an agent in classic DQN (Illustration from \cite{mpmdrl}).}
+    \label{fig:dqn-architecture}
+\end{figure}
+
+
 % show a conceptual overview of each high-level moving part
 % and how they communicate
 % Trainer class as an entry point
 % show the class diagram and explain more low-level details}
 
 \section{Technologies} \label{section:technologies}
-% PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab
-% In the future, TensorBoard
+% PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab, TensorBoard
 
 \section{User Manual} \label{section:user-manual}
 % Commands for training, running, deploying, flags and configuration variables
