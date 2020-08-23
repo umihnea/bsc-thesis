@@ -366,7 +366,37 @@ Both implementations are able to deduce their maximum allowed capacity from the 
 This mechanism is useful inside cloud instances as it allows the training process to use as much as possible of the machine's available resources.
 
 \section{Technologies} \label{section:technologies}
-% PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab, TensorBoard
+In our framework we integrate a multitude of quality helper libraries, in order to focus on the quality and performance of our implementation.
+Our stack enables us to support both CPU and GPU processing, to prototype quckly and to leverage the stability of battle-tested RL and libraries.
+Below we present the most important libraries we use and mention their role in the project.
+% possible extensions: Google Cloud Compute, TensorBoard
+
+\subsection{PyTorch}
+\textbf{PyTorch} is an open-source machine learning library based on the Torch library.
+It was created with a focus on the Python language \cite{pytorch-book} and thus has a strong interface for Python, although a C++ interface is also provided.
+PyTorch has been built for speed and provides GPU-accelerated tensor support as well as a strong neural network package -- \verb|torch.nn|.
+A distinguishable mechanic of this framework is its auto-differentiation implementation (called \texttt{autograd}) which allows building dynamic computation graphs, making the framework more flexible.
+PyTorch is used in our framework to build the neural network.
+Tensor computations are also an integral part of our algorithm implementations.
+
+\subsection{NumPy}
+NumPy is a scientific computing package for Python, supporting linear algebra, and featuring a complex random number library and versatile data structures for vectorized computation.
+We use NumPy \verb|ndarray|s as a CPU-only equivalent to PyTorch's tensors, in areas of our program which do not need to support both processes.
+For example, the replay memory's buffer is exclusively held in main memory and thus does not require tensors, but we do perform vectorized operations and operations involving randimization.
+NumPy's advantages are its speed and its strong documentation.
+
+\subsection{OpenAI Gym}
+In order to test our agent implementations, we rely on an excellent solution developed by the OpenAI team.
+\textbf{OpenAI Gym} \cite{openai-gym} provides ready-made reinforcement learning environments, as well as flexible tools with which programmers can create their own.
+We use OpenAI's supplied Atari environments, which provide interfaces to keep track of in-game score, lives, health or other indicators.
+Those variables, primarily the score, serve as the agent's reward signals.
+
+\subsection{Jupyter Notebook}
+Jupyter Notebook is a web-based environment for creating interactive ``notebooks'' -- documents which interleave Python code with Markdown notes and plots.
+They are a great tool for quick prototyping models and are widespread in the Python data science community.
+Notebook is only one project among many released by Project Jupyter as open-source software.
+We extensively used notebooks during the early phase of the framework.
+More importantly, we incorporate a separate directory for special notebooks for studying algorithm performance, to generate graphs and to compare different training runs.
 
 \section{User Manual} \label{section:user-manual}
 % Commands for training, running, deploying, flags and configuration variables
