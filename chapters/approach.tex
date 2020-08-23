@@ -247,7 +247,7 @@ The default metric used in this implementation is the average score over the las
 
 A separate \textbf{``forced'' checkpoint} is taken at the end of training, regardless of the score metric.
 This is done because most algorithms don’t stabilize until the very end of training.
-However, despite more reliably reaching good scores, they are sometimes still lower than previous record high-scores induced by earlier local optima.
+However, despite more reliably reaching good scores, well-performing agents do sometimes score lower than previous record high-scores induced by earlier local optima or by chance.
 
 The manager is configurable -- its adjustable properties are the checkpoint frequency \texttt{every}, 
 representing the number of steps between two consecutive snapshots, and the allowed capacity
@@ -255,18 +255,115 @@ representing the number of steps between two consecutive snapshots, and the allo
 
 \subsection{Agent Modules} \label{section:agent-modules}
 
+The framework contains a collection of agents, currently consisting of four different algorithms in the DQN family.
+The relationships among the agent classes is detailed in Figure \ref{fig:agent-class-diagram}.
+
 \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{app-agent-inheritance-diagram.png}
+    \caption{A UML diagram representing the agent classes and their inheritance relationships.}
+    \label{fig:agent-class-diagram}
+\end{figure}
+
+We will dissect the \texttt{deepq} package which, besides being a stand-alone implementation of the original DQN algorithm, represents the foundation upon which the other agent build upon.
+
+The \texttt{deepq.Agent} module encapsulates the algorithm described in the DeepMind paper \cite{atari-dqn}.
+An agent entity is initialized from a set of hyperparameters loaded from the configuration file in its \verb|__init__| method.
+
+\begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{dqn-architecture.png}
     \caption{High-level architectural view of an agent in classic DQN (Illustration from \cite{mpmdrl}).}
     \label{fig:dqn-architecture}
 \end{figure}
 
+The agent is fitted with two networks, which together constitute our model. We will explain in more depth in Subsection \ref{section:model-arch}. The networks are:
+\begin{enumerate}
+    \item the \textbf{main} Q-network, which provides the basis of action in the environment.
+    \item the \textbf{target} Q-network, which estimates the Q-values of the next state.
+\end{enumerate}
 
-% show a conceptual overview of each high-level moving part
-% and how they communicate
-% Trainer class as an entry point
-% show the class diagram and explain more low-level details}
+An agent class’s most central methods are \texttt{act} and \texttt{learn}.
+
+The \texttt{act} method of the \texttt{DQNAgent} entity chooses an action based on an $\varepsilon$-greedy policy.
+This essentially means that our agent has a probability $\varepsilon \in [0, 1]$ of choosing a random action.
+During the course of our training, $\varepsilon$ will linearly decrease, until a certain point (e.g., we stop at a 5\% chance and keep it there for the rest of our training) -- this is called epsilon decay.
+
+\textbf{Epsilon decay} is implemented by a secondary function in our module, called when a training episode finishes (see \verb|decay_epsilon|).
+The process of decaying $\varepsilon$ is crucial to the convergence guarantees of most reinforcement learning algorithms.
+It manages proper exploration of the environment.
+Without proper control over this aspect, the agent can and will tend to get stuck in local optima.
+
+The \verb|learn| method encapsulates the core of the system and runs one step of mini-batch gradient descent, as explained in Section \ref{section:dqn}.
+The steps of the algorithm are broken down below.
+
+Firstly, a mini-batch of transitions is sampled uniformly from our \textbf{replay memory}.
+A transition represents a unit of agent experience and has the form $(s, a, r, s')$, where $a$ is an action in the action space, $r \in \mathbb{R}$ is the reward signal, $s$ is an observation (or state) of our agent and $s'$ is its successor state (observed after taking action $a$).
+
+The Q-values are computed by a forward pass through our main network, for all states $s$ in our mini-batch, obtaining the main Q-value matrix.
+This process can be accelerated, as the implementation is capable of leveraging GPU processing.
+However, we are interested only in the actions $a$ which were taken during the actual play-through of our agent.
+We reduce this matrix to row vector, by only selecting the relevant action $a$ for every set of Q-values.
+
+What in the original paper is denoted as $y_i$ will be computed by the agent in vector form by computing the mean-squared error function of the two vectors.
+Using the computed loss, we take a step of mini-batch gradient descent.
+Our optimizer is \verb|RMSProp|, as is in the original work.
+
+Figure \ref{fig:dqn-architecture} provides a high-level recap, using a graphical depiction of how the different components interact during the learning step of the agent.
+
+\subsubsection{Model Architecture and the \texttt{DeepQNetwork} Class} \label{section:model-arch}
+
+% Add a figure generated with https://github.com/ashishpatel26/Tools-to-Design-or-Visualize-Architecture-of-Neural-Network
+
+In the agent overview paragraphs, we mention that our model consists of two networks, the \textbf{main} and \textbf{target} deep Q-networks.
+They are convolutional neural networks, sharing the same architecture, kept unchaged from the original DQN paper in \cite{atari-dqn}.
+
+A deep Q-network is composed of three layers: the first ConvNet layer applies a $8 \times 8$ filter with a stride of 4, the second ConvNet layer applies a $4 \times 4$ filter with a stride of 2, while the final layer is a fully-connected layer with 256 rectifier units \cite{atari-dqn}.
+Both convolutional layers are followed by a rectifier nonliniarity.
+
+The \textbf{input} to either network is a stack of $k$ frames, denoted conceptually as $s$ (or $s'$ in the case of the successor state, fed into the target network).
+Stacking multiple frames captures the motion aspect of the game environment, which is essential for decision-making.
+To reduce the storage space taken by the state representation, any frame captured from the emulator is transformed through gray-scaling, then cropped, to produce an 84 by 84 grayscale image \cite{atari-dqn}.
+This transformation function is implemented as a wrapper around the emulator, in the \texttt{wrappers} package.
+
+The \textbf{output} is a distribution over actions in the finite action space of the environment.
+In the case of Pac-Man, the action space consists of four directions.
+The available actions are specified by the Gym environment.
+Other environments may provide actions for firing a weapon or activating an item.
+
+The above network architecture is implemented in \texttt{deepq.DeepQNetwork} as an extension of PyTorch’s \texttt{nn.Model}.
+\texttt{nn.Model} is an abstract class describing a node in a PyTorch computation graph, any extension of which needs to implement the \texttt{forward} and \texttt{backward} methods.
+In the case of a neural network, they represent the forward pass and the backpropagation step respectively.
+
+\subsection{The \texttt{replay\_memory} Package} \label{section:replay-memory-implementation}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{app-replay-memory-class.png}
+        \caption{Class diagram of \texttt{ReplayMemory}.}
+        \label{fig:rm-diagram}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{app-prioritized-replay-memory-class.png}
+        \caption{\texttt{PrioritizedReplayMemory}}
+        \label{fig:prm-diagram}
+    \end{subfigure}
+\end{figure}
+
+The project provides two implementations for the agent’s replay memory.
+
+\texttt{ReplayMemory} provides a simple buffer from which we can sample experiences uniformly at random and is used in DQN and in double Q-learning as well, as it does not impact the advantages of double learning.
+
+\texttt{PrioritizedReplayMemory} is a more complex mechanism which memorizes the TD-errors of transitions and computes some priorities at every learning step, according to the algorithm in Section \ref{section:per}.
+The prioritized sampling operation does not use a uniform distribution.
+Instead, we use a sum tree to select transitions according to the error-based probability distribution.
+
+Both implementations are able to deduce their maximum allowed capacity from the total amount of memory (in gigabytes) given in the configuration file.
+This mechanism is useful inside cloud instances as it allows the training process to use as much as possible of the machine's available resources.
 
 \section{Technologies} \label{section:technologies}
 % PyTorch, Google Cloud Compute, OpenAI Gym, Jupyter Lab, TensorBoard
