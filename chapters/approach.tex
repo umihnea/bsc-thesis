@@ -366,12 +366,12 @@ Both implementations are able to deduce their maximum allowed capacity from the 
 This mechanism is useful inside cloud instances as it allows the training process to use as much as possible of the machine's available resources.
 
 \section{Technologies} \label{section:technologies}
-In our framework we integrate a multitude of quality helper libraries, in order to focus on the quality and performance of our implementation.
+In our framework we integrate a multitude of helper libraries, in order to focus on the quality and performance of our implementation.
 Our stack enables us to support both CPU and GPU processing, to prototype quckly and to leverage the stability of battle-tested RL and libraries.
 Below we present the most important libraries we use and mention their role in the project.
 % possible extensions: Google Cloud Compute, TensorBoard
 
-\subsection{PyTorch}
+\subsection*{PyTorch}
 \textbf{PyTorch} is an open-source machine learning library based on the Torch library.
 It was created with a focus on the Python language \cite{pytorch-book} and thus has a strong interface for Python, although a C++ interface is also provided.
 PyTorch has been built for speed and provides GPU-accelerated tensor support as well as a strong neural network package -- \verb|torch.nn|.
@@ -379,24 +379,86 @@ A distinguishable mechanic of this framework is its auto-differentiation impleme
 PyTorch is used in our framework to build the neural network.
 Tensor computations are also an integral part of our algorithm implementations.
 
-\subsection{NumPy}
+\subsection*{NumPy}
 NumPy is a scientific computing package for Python, supporting linear algebra, and featuring a complex random number library and versatile data structures for vectorized computation.
 We use NumPy \verb|ndarray|s as a CPU-only equivalent to PyTorch's tensors, in areas of our program which do not need to support both processes.
 For example, the replay memory's buffer is exclusively held in main memory and thus does not require tensors, but we do perform vectorized operations and operations involving randimization.
 NumPy's advantages are its speed and its strong documentation.
 
-\subsection{OpenAI Gym}
+\subsection*{OpenAI Gym}
 In order to test our agent implementations, we rely on an excellent solution developed by the OpenAI team.
 \textbf{OpenAI Gym} \cite{openai-gym} provides ready-made reinforcement learning environments, as well as flexible tools with which programmers can create their own.
 We use OpenAI's supplied Atari environments, which provide interfaces to keep track of in-game score, lives, health or other indicators.
 Those variables, primarily the score, serve as the agent's reward signals.
 
-\subsection{Jupyter Notebook}
-Jupyter Notebook is a web-based environment for creating interactive ``notebooks'' -- documents which interleave Python code with Markdown notes and plots.
-They are a great tool for quick prototyping models and are widespread in the Python data science community.
+\subsection*{Jupyter Notebook}
+Jupyter Notebook is a web-based environment for creating interactive ``notebooks'' -- documents which interleave Python code with Markdown notes, Matlib plots and other objects.
+They are a great tool for quickly prototyping models and documenting one's solution to a problem and are widespread in the Python data science community.
 Notebook is only one project among many released by Project Jupyter as open-source software.
 We extensively used notebooks during the early phase of the framework.
-More importantly, we incorporate a separate directory for special notebooks for studying algorithm performance, to generate graphs and to compare different training runs.
+More importantly, we incorporate a separate directory for special notebooks for studying algorithm performance, to plot agent performance and to compare different training runs.
 
 \section{User Manual} \label{section:user-manual}
-% Commands for training, running, deploying, flags and configuration variables
+This section presents the basics of operating our framework to use one of our existing agents in the library to run a training job and collect its data.
+Below we list commands for training, evaluation and deployment and we explain flags and configuration variables.
+
+\subsection*{Training}
+Training can be initialized locally on the user's computer or deployed on a cloud environment.
+The starting script \verb|train.py| initializes and starts the \verb|Trainer|, changes its mode of operation based on the relevant flags and passes it the configuration file.
+\begin{verbatim}
+python train.py -c <configuration-file> <options>
+\end{verbatim}
+
+This is an example of a \verb|YAML| configuration file, written for the DQN algorithm:
+\begin{verbatim}
+training:
+  name: dqn
+  ...
+model:
+  learning_rate: 1e-4
+  gamma: 0.99
+  ...
+checkpoints:
+  path: ../data/checkpoints/
+  max_size: 5
+  every: 500
+logs:
+  path: ../data/logs/
+monitor:
+  path: ../data/monitor/
+evaluation:
+  num_episodes: 200
+  ...
+\end{verbatim}
+
+The \verb|training| node contains general information about the training job, including a label which will help us track this job when we analyze tha data and compare it the results of other jobs.
+
+The \verb|model| node contains hyperparameters required by that particular algorithm to run. In this case, we pass the hyperparameters required by vanilla deep Q-learning.
+A lot of the parameters are common among the various implementations (for example, \verb|learning_rate| is a general parameter of the neural network).
+
+The \verb|checkpoints| settings group controls the checkpoint manager, as discussed in its relevant subsection in the \emph{Implementation} section.
+
+\verb|monitor| and \verb|evaluation| control the \textbf{evalutation}. Those are not relevant to the training per se, but sometimes we want to associate the evaluation settings to the algorithm itself, so we can put them into the same file, instead of having two separate configurations (although using separate configurations between traning and evaluation is possible).
+
+Before the launch of the training job, the user can specify the desired algorithm using two special flags.
+\verb|--per| trains the agent using prioritized experience replay.
+\verb|--doubledqn| train the agent using double Q-learning.
+Combining these flags in whichever order will enable both approaches simultaniously by loading and training the \verb|DoublePERAgent|.
+
+\subsection*{Evaluation}
+For evaluation, we similarly run:
+\begin{verbatim}
+    python play.py -c <configuration-file> <options>
+\end{verbatim}
+
+The evaluation environment is designed to test an agent in a more stable environment, with no randimization.
+This running mode has the addition of outputing \textbf{video captures} of the emulator in a dedicated \verb|monitor| directory (as specified by the \verb|monitor.path| setting in the configuration), so that we can study an agent's behaviour by directly observing any strategies it might have developed or any areas in which it have failed to develop one.
+
+\subsection*{Utility Scripts}
+The \verb|data| directory stores the data associated to the training job, including logs, scores and checkpoints.
+At the end of training, this directory is compressed into a \verb|results| file (using the \verb|gzip| standard) so the data directory itself is redundant and needs to be cleaned.
+For this purpose, we provide a \verb|cleanup.sh| Bash script, for $*$nix systems, which removes the training files and re-initializes the required directory structure.
+
+Additionally, we might want to make modifications to the implementation and want to keep the Python codebase compliant to PEP norms.
+For this purpose we use the \verb|black| code formatter and the \verb|docformatter| utility for docstrings.
+We provide a \verb|format.py| Python script, which combines those two and runs them recursively over every directory in our codebase, in order to keep everything tidy and uniformly stylized.
