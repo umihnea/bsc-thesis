@@ -1,0 +1,75 @@
+This chapter introduces our methodology, presents our experiment setup and results, and compares them to the expectations set by existing benchmarks.
+First of all, we introduce and justify the methods we use to evaluate agent performance in the Pac-Man environment.
+We then show the results obtained using the chosen technique and analyze them, using the tools provided in our framework.
+We comment on those results and compare them to what other similar studies have shown.
+
+\section*{Evaluation in Reinforcement Learning}
+\textbf{Evaluation} is a fundamental part of any machine learning project and reinforcement learning is not an exception to this rule.
+The goal of evaluation in RL is compatible with the goal of its encompassing field and is analogous to that of supervised learning, in the sense that both are concerned with measuring how well a model \emph{generalizes}.
+
+The aim of evaluation in RL is to measure the extent to which the acquired behaviour of the agent generalizes to the class of environment it learned in.
+In other words, researchers try to certify if the agent learns meaningful \emph{skills} -- patterns in behaviour which are general enough to solve the problems they are developed to solve, even if presented from a new perspective.
+
+In a similar manner, in supervised learning, models are evaluated based on their ability to accurately predict, estimate or classify previously unseen data -- their generalization ability.
+A key difference between RL and its supervised counterpart is the latter's clearer methodology of dividing the dataset.
+Experiments in supervised learning can and must split their data into specific subsets -- one for training and one for evaluation. In the RL setting, this separation is seldom possible.
+
+Attempts to correct this overlap between training and evaluation in experimental RL is an active area of research.
+One compelling paper concerning itself with this problem, published by OpenAI researchers, proposes building \emph{procedural generation} into environments \cite{procgen-paper}.
+
+\section*{Setup and Methodology}
+The evaluation \textbf{methodology} we chose for this thesis was used before across numerous RL studies, including in DeepMind's DQN and Double DQN works \cite{atari-dqn,ddqn-paper} and has been originally proposed in the Atari Learning Environment (ALE) paper \cite{ale-paper}, which was specifically developed to analyze agent perfromance in video game environments on the Atari 2600.
+We follow the above guidelines closely, with a few exceptions.
+For example, we will not be including including human performance in our benchmark.
+
+% REFACTOR THIS --------------------------------------------------------------
+% To prevent overfitting, the environment has \textbf{added stochasticity}.
+% A significant portion of video game environments are deterministic by nature, including Pac-Man.
+% If the agent were to replay the same sequence of moves over multiple gameplays, the environment would respond in the exact same way.
+% The problem is that an ``imposter’’ agent could overfit and memorize the level over time, resulting in an agent that can solve the level reasonably efficiently, but which fails if we tweak even fine details.
+% This is prevented by the stochasticity of the environment and the stochasticity of its own model.
+% In order to ensure that no two training runs are the same from an environmental stand-point, the agent’s choice is replayed in the environment.
+% This can be a fixed or a random number of times, which we denote $k$.
+% Some task environments choose a $k$ in $[1, 3]$.
+% We use the fixed variant\footnotemark{} of this technique, which has been proposed and used by the DeepMind team in the original DQN study \cite{atari-dqn}.
+% \footnotetext{DQN uses $k = 4$ for most games, except for Space Invaders which requires $k = 3$ because of an overlap with the period at which the projectiles blink \cite{atari-dqn}.}
+
+Additionally, we use \textbf{epsilon annealing} for the $\varepsilon$-greedy policies, another technique in the DQN standard.
+The approach consists of linearly decreasing epsilon from $1$ to a predetermined lower bound, usually $10\%$ or $5\%$, to ensure non-zero exploration probability over the entire training run.
+The role of this is to ensure that the agent does not get stuck in a local optimum, as well as to prevent overfitting to the environment.
+If we allow the exploration coefficient to go all the way to zero, we risk having an agent learn a pattern that is inefficient or even counterproductive and would have no way of stopping it short of restarting the training run.
+
+Our experiment setup starts from well-established standards in order to find ways to tweak them.
+The implementation we use for our task environment is \texttt{MsPacman-v4}, provided by OpenAI within the \texttt{gym} package.
+The base name of the game is \texttt{MsPacman}, designating the Atari 2600 version of Pac-Man.
+The package offers multiple variables which control stochasticity of the environment.
+An environment labeled \texttt{Deterministic} will have a fixed frameskip, set to $k = 4$ in our case.
+The label \texttt{v4} indicates that the agent action is not repeated (besides the frame-skipping aspect), in contrast to \texttt{v0} which specifies a 25\% chance the previous action is repeated.
+
+Our choice of hyperparameters is illustrated in Table \ref{tab:our-hyperparameters}.
+
+\begin{table}
+    \centering
+        \begin{tabular}{ll}
+        Variable                           & Value   \\
+        learning rate $\alpha$             & 1e-4    \\
+        discount factor $\gamma$           & 0.99    \\
+        initial $\varepsilon$              & 1       \\
+        terminal $\varepsilon$             & 0.05    \\
+        $\varepsilon$ decay                & 8.62e-5 \\
+        batch size                         & 32      \\
+        swap frequency (number of steps)   & 1000    \\
+        PER $\alpha$                       & 0.6     \\
+        PER $\epsilon$                     & 0.01
+        \end{tabular}%
+    \caption{Hyperparameters used to train our agent models.}
+    \label{tab:our-hyperparameters}
+    \end{table}
+
+% gym
+% hyperparameters
+
+\section*{Results}
+% plot some graphs
+% write the conclusion
+% read Roman Ring's thesis again
