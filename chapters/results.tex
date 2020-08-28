@@ -48,7 +48,7 @@ It is routinely adjusted to fit the number of steps the agent will train for.
 \begin{table}
     \centering
         \begin{tabular}{ll}
-            \textbf{Variable}                  & \textbf{Value}   \\
+            \textbf{Name}                  & \textbf{Value}   \\
             learning rate $\alpha$             & 1e-4    \\
             discount factor $\gamma$           & 0.99    \\
             initial $\varepsilon$              & 1       \\
@@ -91,4 +91,27 @@ Small buffer sizes could hinder the algorithm's ability to gather large enough s
 Also notable is that double Q-learning was slower to generalize than the baseline.
 This could hint that \texttt{doubleper} simply did not have a long enough run to start properly generalizing.
 
+\begin{table}
+    \centering
+        \begin{tabular}{ll}
+            \textbf{Agent / Algorithm} & \textbf{Average score (over 2000 episodes)}   \\
+            Random agent               & 243.3 \\
+            Baseline DQN               & 1532.2 \\
+            Double DQN                 & 2280.5 \\
+            \textbf{PER}               & \textbf{2953} \\
+            Double PER                 & 646.35 \\
+        \end{tabular}%
+        \caption{Results of agent \textbf{evaluation}. Each agent has been run for 2000 full episodes.}
+    \label{tab:evaluation-results}
+\end{table}
 
+In Table \ref{tab:evaluation-results} we present the results of evaluation.
+The evaluation is done by taking snapshots of final agent states (i.e., the state of the neural networks), \emph{unchaged} from the end of training.
+The agents do not learn from new experiences during evaluation.
+
+Other training snapshots were availabile to us as samples for evaluation.
+However, we considered that hand-picking data would be unfair and would result into bias from outliers (for example if we pick a performant snapshots from a local optimum).
+
+We remark that the ranking stays the same, being a natural continuation of the trend demonstrated during training, with double DQN and PER on top of it.
+The new aspect in the evaluation table is the inclusion of a random agent, to serve as comparison.
+Judging by the difference from random noise, we can conclude that the agents succesfully learn, with even the underperforming algorithm achieving  2-3 times the score of the random agent. The first ranking algorithm scores 12 times above the random agent and almost 2 times the DQN baseline.
