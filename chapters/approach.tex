@@ -8,7 +8,7 @@ In Section \ref{section:modelling-the-problem}, we justify why we choose to stud
 
 In Section \ref{section:approach-algorithms}, we introduce some of the algorithms built into our collection of autonomous agents.
 The main method is vanilla DQN, which was covered previously in Section \ref{section:dqn}.
-However, in this section, we present two important improvements over it -- Double DQN and Prioritized Experience Replay.
+However, in this section, we present two important improvements over it -- double DQN and Prioritized Experience Replay.
 
 In Section \ref{section:implementation}, we take a look at each subcomponent of an individual agent program and map each one to notions from our previous chapter.
 Each agent has its own module and inherits a specific structure from a prototype.
@@ -94,7 +94,7 @@ The original DQN, however, is already covered by Section \ref{section:dqn} of ou
 Instead, this section deals with \textbf{double DQN} and \textbf{prioritized experience replay (PER)}, both of which address shortcomings of the original algorithm.
 
 \subsection{Double Q-learning} \label{section:double-dqn}
-Double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
+double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
 The study determines that general Q-learning (and, by extension, deep Q-learning) suffers from a problem known as a \textbf{maximization bias} and adapts the original algorithm to account for this and counteract the bias.
 
 Stated simply, a \textbf{maximization bias} is an implicit preference of the algorithm to overestimate values, despite divergence from the true value.

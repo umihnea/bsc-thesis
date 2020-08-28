@@ -16,25 +16,19 @@ Experiments in supervised learning can and must split their data into specific s
 
 Attempts to correct this overlap between training and evaluation in experimental RL is an active area of research.
 One compelling paper concerning itself with this problem, published by OpenAI researchers, proposes building \emph{procedural generation} into environments \cite{procgen-paper}.
+\vfill % or \pagebreak
 
 \section*{Setup and Methodology}
 The evaluation \textbf{methodology} we chose for this thesis was used before across numerous RL studies, including in DeepMind's DQN and Double DQN works \cite{atari-dqn,ddqn-paper} and has been originally proposed in the Atari Learning Environment (ALE) paper \cite{ale-paper}, which was specifically developed to analyze agent perfromance in video game environments on the Atari 2600.
 We follow the above guidelines closely, with a few exceptions.
 For example, we will not be including including human performance in our benchmark.
 
-% REFACTOR THIS --------------------------------------------------------------
-% To prevent overfitting, the environment has \textbf{added stochasticity}.
-% A significant portion of video game environments are deterministic by nature, including Pac-Man.
-% If the agent were to replay the same sequence of moves over multiple gameplays, the environment would respond in the exact same way.
-% The problem is that an ``imposter’’ agent could overfit and memorize the level over time, resulting in an agent that can solve the level reasonably efficiently, but which fails if we tweak even fine details.
-% This is prevented by the stochasticity of the environment and the stochasticity of its own model.
-% In order to ensure that no two training runs are the same from an environmental stand-point, the agent’s choice is replayed in the environment.
-% This can be a fixed or a random number of times, which we denote $k$.
-% Some task environments choose a $k$ in $[1, 3]$.
-% We use the fixed variant\footnotemark{} of this technique, which has been proposed and used by the DeepMind team in the original DQN study \cite{atari-dqn}.
-% \footnotetext{DQN uses $k = 4$ for most games, except for Space Invaders which requires $k = 3$ because of an overlap with the period at which the projectiles blink \cite{atari-dqn}.}
+To increase performance, we use a fixed frameskip $k$ inside the environment.
+This multiplies number of environment steps the agent can advance per learning step, with only minimally impacting learning.
+This technique\footnotemark{} has been proposed and used by the DeepMind team in the original DQN study \cite{atari-dqn}.
+\footnotetext{DQN uses $k = 4$ for most games, except for Space Invaders which requires $k = 3$ because of an overlap with the period at which the projectiles blink \cite{atari-dqn}.}
 
-Additionally, we use \textbf{epsilon annealing} for the $\varepsilon$-greedy policies, another technique in the DQN standard.
+We use \textbf{epsilon annealing} for the $\varepsilon$-greedy policies, another technique in the DQN standard.
 The approach consists of linearly decreasing epsilon from $1$ to a predetermined lower bound, usually $10\%$ or $5\%$, to ensure non-zero exploration probability over the entire training run.
 The role of this is to ensure that the agent does not get stuck in a local optimum, as well as to prevent overfitting to the environment.
 If we allow the exploration coefficient to go all the way to zero, we risk having an agent learn a pattern that is inefficient or even counterproductive and would have no way of stopping it short of restarting the training run.
@@ -73,14 +67,28 @@ It is routinely adjusted to fit the number of steps the agent will train for.
 We train each agent for $12240$ episodes and don't keep a count of environment steps (i.e., actions played inside the emulator) or frames seen, so this can vary between training runs.
 Other studies design their training routines to run for a finite number of steps.
 However, in our design, one episode produces one data point. We have chosen not to follow this guideline as it would be easier to stop when we have gathered exactly the same amount of data on each run.
+Each training job ran for 10-15 hours of wall clock time, depending on the complexity of each algorithm.
 
 We run four algortihms in this setup: \texttt{dqn}, \texttt{doubledqn}, \texttt{per} and \texttt{doubleper}.
 Each algorithm was covered separately in Section \ref{section:implementation}.
 The results of their training runs are represented in Figure \ref{fig:training-results}.
+The plot refects a limited window of each agent's learning ability and hints to potential drawbacks and advantages of each technique in Pac-Man.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{training-comparison-plot.png}
-    \caption{A performance comparison during training of the agents.}
+    \caption{A performance comparison during agent \textbf{training}, showing each algortihm in a different color. The x-axis shows the episode number while the y-axis represents the obtained score.}
     \label{fig:training-results}
 \end{figure}
+
+We observe that, from the training perspective, the most performant two methods are double Q-learning and PER, which are able to learn steadily and reliably over the course of the experiment and appear to hold onto this growth trend towards the end of their respective runs.
+This is an expected result as these two techniques are frequently cited as a significant improvement over the baseline DQN.
+The unexpected result is prioritized double Q-learning, the hybridization of the above two best performers (labeled \texttt{doubleper} and presented in yellow in Figure \ref{fig:training-results}) does not score above the DQN baseline (in blue) -- it in fact manages to score lower, showing little to no improvement.
+Some agents do fail to improve at some games using this technique, as attested by the benchmark provided by Schaul et al. \cite{per-paper}.
+The two components of the hybrid interfere with each other and result in a weaker agent.
+We hypothesize that this underperformance is due to the harsh memory contstraints the agent was operating under.
+Small buffer sizes could hinder the algorithm's ability to gather large enough sample before starting to forget vital information, despite it being properly prioritized.
+Also notable is that double Q-learning was slower to generalize than the baseline.
+This could hint that \texttt{doubleper} simply did not have a long enough run to start properly generalizing.
+
+
