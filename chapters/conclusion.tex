@@ -1,0 +1,31 @@
+In this thesis, we introduced the fundamentals of \emph{reinforcement learning} -- a field of machine learning concerned with developing systems which learn based on interaction with the environment.
+What distinguishes RL from other methods is the concept of reward signal, which provides feedback on whether the system behaves in a desirable way, from the perspectives of the goal of a task.
+
+The transfer of knowledge from deep learning to the classical methods in RL is revolutionizing the field.
+In the second part of Chapter \ref{chapter:background}, we presented some of the techniques that emerged to build more performant intelligent agents, leveraging the strength and robustness of neural networks, and especially of the ConvNet architecture.
+
+In order to demonstrate the principles of deep RL in action, we have implemented a light framework, featuring a collection of algorithms in deep Q-learning, originally described in \cite{atari-dqn}, and its successors in the DQN family.
+We benchmark and analyze the performance of our selected approaches on our task environment of choice -- Pac-Man. Solving Pac-Man is an interesting task and features some open challenges, as mentioned in Section \ref{section:modelling-the-problem}.
+
+The following paragraphs give a summary of the most notable \emph{areas of potential improvement} for this work.
+
+One possible extension to this thesis is hyperparemeter search.
+\textbf{Hyperparameter tuning} or \textbf{search} is a problem in machine learning, which consists of tuning the set of hyperparameters to maximize the usefulness of the learning approach \cite{hyperparam-search-paper}.
+Most studies have relied on the entire set of 49 Atari games to study the efficiency of their approaches.
+In our thesis, however, we solve a more precisely defined task and could have benefited from tuning hyperparameters to some extent.
+There is a strong probability that the set of hyperparameters which worked the best on Pong or Enduro does not work as well in Pac-Man.
+However, one problem with auto-tuning is a practical problem, in that applying it to a relatively large problem such as ours requires a large amount of continuously-available compute resources.
+On the basis of these large computation costs, we have decided that it would be cost ineffective.
+
+Another such extension point is including policy-based and actor-critic methods into the benchmark.
+In our background section, we touch on the subject of policy-based methods and their particular advantages.
+The problem with policy-based RL is the novelty and increased complexity of the algorithms, over the more well-established techniques.
+In other words, the state-of-the-art is not accessible to entry-level enthusiasts and would require far more work to implement from scratch, test and deploy.
+
+To sum up, we have seen that autonomous RL agents can learn useful behaviour.
+However, the study of autonomously learning RL agents in games has not been without challenges.
+As we have seen with DQN and its successors, its greatest weakness remains sample efficiency -- agents need to train for millions of steps before they demonstrate any significant amount of ability.
+And even then -- as we pay closer attention to generalization in deep RL -- we find that most Q-learning-based methods only manifest a somewhat limited ability to generalize, outside of very simple strategies (such as Pong, the game with the highest score obtained by DQN \cite{atari-dqn}).
+
+With this in mind, the road ahead looks bright for RL, with a recently released paper from DeepMind – \emph{Agent57} (2020) \cite{agent57-paper}. We note that the latest research trends seem to be using mixed approaches: DQN and policy optimization algorithms, in an attempt to break the barriers set by their predecessors.
+\emph{Agent57} has managed to break every record on the Atari benchmark and has obtained scores above the human baseline on 57 games in the set.
