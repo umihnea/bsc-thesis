@@ -62,7 +62,7 @@ Our exploration coefficient $\varepsilon$ is chosen such that the lower bound is
 \end{table}
 
 \section*{Results}
-We train each agent for $122,240$ episodes, without keeping a count of environment steps (i.e., actions played inside the emulator) or frames seen, so the exact number of steps can vary between training runs.
+We train each agent for \num{122240} episodes, without keeping a count of environment steps (i.e., actions played inside the emulator) or frames seen, so the exact number of steps can vary between training runs.
 Other studies design their training routines to run for a finite number of steps.
 However, in our design, one episode produces one data point. We have chosen not to follow this guideline as it would be easier to stop when we have gathered exactly the same amount of data on each run.
 Each training job ran for 10-15 hours of wall clock time, depending on the complexity of each algorithm.
