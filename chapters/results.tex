@@ -1,11 +1,10 @@
-This chapter introduces our methodology, presents our experiment setup and results, and compares them to the expectations set by existing benchmarks.
+This chapter introduces our methodology and presents our experiment setup and results.
 First of all, we introduce and justify the methods we use to evaluate agent performance in the Pac-Man environment.
 We then show the results obtained using the chosen technique and analyze them, using the tools provided in our framework.
-We comment on those results and compare them to what other similar studies have shown.
 
 \section*{Evaluation in Reinforcement Learning}
 \textbf{Evaluation} is a fundamental part of any machine learning project and reinforcement learning is not an exception to this rule.
-The goal of evaluation in RL is compatible with the goal of its encompassing field and is analogous to that of supervised learning, in the sense that both are concerned with measuring how well a model \emph{generalizes}.
+The goal of evaluation in RL is analogous to that of supervised learning, in the sense that both are concerned with measuring how well a model \emph{generalizes}.
 
 The aim of evaluation in RL is to measure the extent to which the acquired behaviour of the agent generalizes to the class of environment it learned in.
 In other words, researchers try to certify if the agent learns meaningful \emph{skills} -- patterns in behaviour which are general enough to solve the problems they are developed to solve, even if presented from a new perspective.
@@ -16,7 +15,7 @@ Experiments in supervised learning can and must split their data into specific s
 
 Attempts to correct this overlap between training and evaluation in experimental RL is an active area of research.
 One compelling paper concerning itself with this problem, published by OpenAI researchers, proposes building \emph{procedural generation} into environments \cite{procgen-paper}.
-\vfill % or \pagebreak
+\clearpage
 
 \section*{Setup and Methodology}
 The evaluation \textbf{methodology} we chose for this thesis was used before across numerous RL studies, including in DeepMind's DQN and Double DQN works \cite{atari-dqn,ddqn-paper} and has been originally proposed in the Atari Learning Environment (ALE) paper \cite{ale-paper}, which was specifically developed to analyze agent perfromance in video game environments on the Atari 2600.
@@ -43,7 +42,6 @@ The label \texttt{v4} indicates that the agent action is not repeated (besides t
 Our choice of hyperparameters is illustrated in Table \ref{tab:our-hyperparameters}.
 Most hyperparameters are kept unchaged from the original papers they have been proposed in \cite{atari-dqn, per-paper}.
 Our exploration coefficient $\varepsilon$ is chosen such that the lower bound is reached after 90\% of the training is done.
-It is routinely adjusted to fit the number of steps the agent will train for.
 
 \begin{table}
     \centering
@@ -64,7 +62,7 @@ It is routinely adjusted to fit the number of steps the agent will train for.
 \end{table}
 
 \section*{Results}
-We train each agent for $12240$ episodes and don't keep a count of environment steps (i.e., actions played inside the emulator) or frames seen, so this can vary between training runs.
+We train each agent for $122,240$ episodes, without keeping a count of environment steps (i.e., actions played inside the emulator) or frames seen, so the exact number of steps can vary between training runs.
 Other studies design their training routines to run for a finite number of steps.
 However, in our design, one episode produces one data point. We have chosen not to follow this guideline as it would be easier to stop when we have gathered exactly the same amount of data on each run.
 Each training job ran for 10-15 hours of wall clock time, depending on the complexity of each algorithm.
@@ -110,7 +108,7 @@ The evaluation is done by taking snapshots of final agent states (i.e., the stat
 The agents do not learn from new experiences during evaluation.
 
 Other training snapshots were availabile to us as samples for evaluation.
-However, we considered that hand-picking data would be unfair and would result into bias from outliers (for example if we pick a performant snapshots from a local optimum).
+However, we considered that hand-picking data would be unfair and would result in introducing bias from outliers, for example if we accidentally hand-picked performant snapshots which happened in local optima.
 
 We remark that the ranking stays the same, being a natural continuation of the trend demonstrated during training, with double DQN and PER on top of it.
 The new aspect in the evaluation table is the inclusion of a random agent, to serve as comparison.

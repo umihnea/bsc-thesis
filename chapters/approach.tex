@@ -1,4 +1,4 @@
-In this chapter, we focus on \emph{Pacman} as learning environment and on our collection of agent programs based on deep Q-learning.
+In this chapter, we focus on \emph{Pac-Man} as learning environment and on our collection of agent programs based on deep Q-learning.
 
 The project itself consists of a light framework for training, running and evaluating RL agents.
 Our framework is compatible with various other environments, as long as they respect the interface provided by OpenAI Gym.
@@ -23,7 +23,7 @@ We wrap up this chapter with Section \ref{section:user-manual} which consists of
 The problem we solve in this thesis is three-fold.
 Firstly, we specify a variant of a task environment for \emph{Pac-Man}, defining goals and rewards to view it through the lens of reinforcement learning.
 Secondly, we train agents to ``solve’’ that environment, i.e. explore and learn to take optimal decisions to achieve the established goals.
-And lastly, we compare agents based on their how close they were to their goals, what their mean reward was and how stable was their learning process.
+And lastly, we compare agents based on proximity to their goals, mean reward and learning stability.
 
 \textbf{\textit{Pac-Man}} is a classic video game developed by Toru Iwatani and published by Namco Ltd. in 1980 \cite{pacman-in-academia}.
 The game was originally released as an arcade game and it quickly became the most commercially sucessful arcade game ever created.
@@ -43,7 +43,7 @@ The player is represented as a yellow character with a distinctive circular shap
 \footnotetext{Iwatani's stated inspiration for Pac-Man's design was a pizza with a missing slice. \cite{pacman-gameinformer}}
 The board is a bidimensional maze, featuring tunnels which loop around each other, i.e. entering a tunnel on one side will transport the player out through the opposite side of the board.
 \textbf{Pellets} (or \emph{dots}) are placed at almost every position, and the goal of every level is to collect all pellets.
-Most renditions of the game feature four \textbf{ghosts} (faithful to the original), which will chase the player around the board.
+Most renditions of the game feature four \textbf{ghosts} which will chase the player around the board.
 Collisioning with any of the ghosts results in losing a life and being repositioned to the start (without losing progress on dots).
 The ghosts have different ``personalities'' -- each of them has a different approach for chasing Pac-Man.
 There are special power pellets in each of the four corners (seen in Figure \ref{fig:pac-man-screen}).
@@ -58,7 +58,7 @@ This class of task environments is common throughout RL literature and has some 
 \end{itemize}
 
 \textbf{Gridwords} are used in literature to clearly define and \textbf{isolate} agent goals.
-A simplistic environment with a clear task is also beneficial for agent learning due to its low degree of environmental noise -- it does not ``distract'' the agent.
+A simplistic environment with a clear task is also beneficial for agent learning due to its low degree of environmental noise -- the agent can ``focus'' on the task.
 The ease of customizability of the rules inside a gridworld allows creating interesting strategy games to test agents’ decision-making capabilities.
 New non-trivial grid-based environments are an area of open research -- for example, the \emph{Pommerman} benchmark \cite{pommerman-paper} has been formulated as a novel interesting multi-agent problem which does not yet have an optimal solution.
 
@@ -94,7 +94,7 @@ The original DQN, however, is already covered by Section \ref{section:dqn} of ou
 Instead, this section deals with \textbf{double DQN} and \textbf{prioritized experience replay (PER)}, both of which address shortcomings of the original algorithm.
 
 \subsection{Double Q-learning} \label{section:double-dqn}
-double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
+Double DQN \cite{ddqn-paper} is an algorithm in the deep Q-learning family, discovered and published by DeepMind researcher Hado van Hasselt along with several other colleagues.
 The study determines that general Q-learning (and, by extension, deep Q-learning) suffers from a problem known as a \textbf{maximization bias} and adapts the original algorithm to account for this and counteract the bias.
 
 Stated simply, a \textbf{maximization bias} is an implicit preference of the algorithm to overestimate values, despite divergence from the true value.
@@ -169,8 +169,8 @@ The framework is divided into several modules which we detail below.
 
 The \verb|common| package contains classes which are shared among all agent implementations, including those concerning training and evaluation, but also configuration, and a checkpoint manager.
 
-Each agent implementation has its own package: \verb|deepq| is the vanilla DQN agent, \verb|per| implements prioritized experience replay (covered in Section \ref{section:per}) on top of the default DQN, and \verb|doubledqn| and \verb|doubledqn_per| are the double Q-learning versions (explained in Section \ref{section:double-dqn}) of the above algorithms.
-We will cover them all at once in Section \ref{section:agent-modules}.
+Each agent implementation has its own package: \verb|deepq| is the vanilla DQN agent, \verb|per| implements prioritized experience replay on top of the default DQN, and \verb|doubledqn| and \verb|doubleper| are the double Q-learning versions of the former two.
+We cover them in Section \ref{section:agent-modules}.
 
 The \verb|replay_memory| package contains the logic used for memorizing transitions (units of agent experience).
 This package is used by all agents to store, sample and replay transitions.
@@ -207,8 +207,8 @@ Inside this directory is an isolated \verb|plot| package, custom-built to allow 
 The \textbf{trainer} can differ between algorithms and contains more complex procedures overall.
 The \textbf{evaluator} is roughly doing the same thing, but is more universal as it does not need to encapsulate any algorithm-specific logic.
 
-Both systems start by loading the configuration files using the \texttt{ConfigLoader}.
-This is a simple utility class which loads a \texttt{YAML} file into memory, without doing any specific operations.
+Both systems start by loading the configuration file using the \texttt{ConfigLoader}.
+This is a simple utility class which loads a \texttt{YAML} file into memory.
 After the data is loaded, each level has the responsibility to parse it according to its requirements.
 For example, we generally group hyperparameter data under the \texttt{model} category of a configuration file, representing parameters required to calibrate the algorithm.
 The trainer's job is \textbf{general} -- to redirect the model parameters to the agent -- and thus does not do any parsing by itself.
@@ -216,18 +216,17 @@ It is the agent’s job to parse and validate the data.
 
 For training, we initialize every needed component: agent, environment, checkpoint manager, etc.
 The main loop consists of fetching the current state from the emulator, feeding it to the agent for learning and processing, then playing the agent’s chosen action into the emulator.
-At every iteration, we call the checkpoint manager to check if the current state needs to be saved.
-We also log scores and compute statistics for plotting and checkpointing.
+At every iteration, we log scores, compute statistics for plotting and call the checkpoint manager to check if the current state needs to be saved.
 
-The \texttt{Trainer} class has a \texttt{shutdown} method, which is triggered automatically at the end of training but is also mapped to the \texttt{SIGKILL} signal.
+The \texttt{Trainer} class has a \emph{graceful exit} procedure, the \texttt{shutdown} method.
+It is triggered automatically at the end of training and mapped to the \texttt{SIGKILL} signal.
 Training jobs are designed to be able to run for a long time inside a cloud instance, including on preemptible instances\footnotemark{}.
 \footnotetext{relatively low-cost instances which can be terminated at any time if required by the cloud provider.}
-For this reason, it's important to protect training progress and include a soft shutdown sequence.
-The method checkpoints the model, saves statistics (scores, epsilon decay data and memory usage) and compresses everything into a file before terminating.
+The procedure consists of checkpointing the model, saving statistics (scores, epsilon decay data and memory usage) and compresses everything into a file before terminating.
 
-The \textbf{evaluator} does essentially the same thing as the trainer, without needing to account for checkpointing and agent learning.
-It simply executes as many evaluation runs as is specified by the configuration file and saves the statistics in a similar manner to the trainer.
-An additional job performed by the evaluator is capturing video from inside the emulator and saving it at a specified location.
+The \textbf{evaluator} essentially does the same thing as the trainer, without accounting for checkpointing or agent learning.
+It simply executes as many evaluation runs as specified by the configuration file and saves the statistics.
+An distinguishing feature of the evaluator is that it captures video from inside the emulator and saves it at the location specified in \texttt{monitor.path}.
 
 \subsection{\texttt{CheckpointManager}}
 
@@ -242,7 +241,7 @@ An additional job performed by the evaluator is capturing video from inside the 
 The best snapshots from training are used to reconstruct the agent and play the game in the evaluation environment.
 
 Each snapshot file is several megabytes in size and a proper training session usually runs for hundreds of thousands (ideally, millions) of training steps.
-In order to conserve disk space during training, the job of the checkpoint manager is to always compare the snapshots based on a predetermined metric, and to decide which ones to keep and which ones to delete in order to save space.
+In order to conserve disk space during training, the job of the checkpoint manager is to always compare the snapshots based on a predetermined metric in order to decide which ones to keep and which ones to remove.
 The default metric used in this implementation is the average score over the last 100 episodes (an episode in the context of Pac-Man means a full level playthrough from board initialization until a terminal state is reached).
 
 A separate \textbf{``forced'' checkpoint} is taken at the end of training, regardless of the score metric.
@@ -265,7 +264,7 @@ The relationships among the agent classes is detailed in Figure \ref{fig:agent-c
     \label{fig:agent-class-diagram}
 \end{figure}
 
-We will dissect the \texttt{deepq} package which, besides being a stand-alone implementation of the original DQN algorithm, represents the foundation upon which the other agent build upon.
+We will dissect the \texttt{deepq} package which, besides being a stand-alone implementation of the original DQN algorithm, represents the foundation upon which the other agents build upon.
 
 The \texttt{deepq.Agent} module encapsulates the algorithm described in the DeepMind paper \cite{atari-dqn}.
 An agent entity is initialized from a set of hyperparameters loaded from the configuration file in its \verb|__init__| method.
@@ -303,27 +302,28 @@ A transition represents a unit of agent experience and has the form $(s, a, r, s
 The Q-values are computed by a forward pass through our main network, for all states $s$ in our mini-batch, obtaining the main Q-value matrix.
 This process can be accelerated, as the implementation is capable of leveraging GPU processing.
 However, we are interested only in the actions $a$ which were taken during the actual play-through of our agent.
-We reduce this matrix to row vector, by only selecting the relevant action $a$ for every set of Q-values.
+We reduce this matrix to a row vector, by only selecting the relevant action $a$ for every set of Q-values.
 
 What in the original paper is denoted as $y_i$ will be computed by the agent in vector form by computing the mean-squared error function of the two vectors.
 Using the computed loss, we take a step of mini-batch gradient descent.
-Our optimizer is \verb|RMSProp|, as is in the original work.
+Our optimizer is \verb|RMSProp|, as in the original work \cite{atari-dqn}.
 
 Figure \ref{fig:dqn-architecture} provides a high-level recap, using a graphical depiction of how the different components interact during the learning step of the agent.
+
+\clearpage
 
 \subsubsection{Model Architecture and the \texttt{DeepQNetwork} Class} \label{section:model-arch}
 
 % Add a figure generated with https://github.com/ashishpatel26/Tools-to-Design-or-Visualize-Architecture-of-Neural-Network
 
-In the agent overview paragraphs, we mention that our model consists of two networks, the \textbf{main} and \textbf{target} deep Q-networks.
-They are convolutional neural networks, sharing the same architecture, kept unchaged from the original DQN paper in \cite{atari-dqn}.
-
+Our model consists of two networks, the \textbf{main} and \textbf{target} deep Q-networks.
+They are convolutional neural networks, sharing the same architecture.
 A deep Q-network is composed of three layers: the first ConvNet layer applies a $8 \times 8$ filter with a stride of 4, the second ConvNet layer applies a $4 \times 4$ filter with a stride of 2, while the final layer is a fully-connected layer with 256 rectifier units \cite{atari-dqn}.
 Both convolutional layers are followed by a rectifier nonliniarity.
 
 The \textbf{input} to either network is a stack of $k$ frames, denoted conceptually as $s$ (or $s'$ in the case of the successor state, fed into the target network).
 Stacking multiple frames captures the motion aspect of the game environment, which is essential for decision-making.
-To reduce the storage space taken by the state representation, any frame captured from the emulator is transformed through gray-scaling, then cropped, to produce an 84 by 84 grayscale image \cite{atari-dqn}.
+To reduce the storage space taken by the state representation, any frame captured from the emulator is transformed through gray-scaling, then cropped, to produce an 84 $\times$ 84 grayscale image \cite{atari-dqn}.
 This transformation function is implemented as a wrapper around the emulator, in the \texttt{wrappers} package.
 
 The \textbf{output} is a distribution over actions in the finite action space of the environment.
@@ -331,9 +331,9 @@ In the case of Pac-Man, the action space consists of four directions.
 The available actions are specified by the Gym environment.
 Other environments may provide actions for firing a weapon or activating an item.
 
-The above network architecture is implemented in \texttt{deepq.DeepQNetwork} as an extension of PyTorch’s \texttt{nn.Model}.
+The above network architecture is implemented in \texttt{deepq.DeepQNetwork} as an extension to PyTorch’s \texttt{nn.Model}.
 \texttt{nn.Model} is an abstract class describing a node in a PyTorch computation graph, any extension of which needs to implement the \texttt{forward} and \texttt{backward} methods.
-In the case of a neural network, they represent the forward pass and the backpropagation step respectively.
+In the case of a neural network, they correspond to the forward pass and the backpropagation step respectively.
 
 \subsection{The \texttt{replay\_memory} Package} \label{section:replay-memory-implementation}
 
@@ -356,55 +356,55 @@ In the case of a neural network, they represent the forward pass and the backpro
 
 The project provides two implementations for the agent’s replay memory.
 
-\texttt{ReplayMemory} provides a simple buffer from which we can sample experiences uniformly at random and is used in DQN and in double Q-learning as well, as it does not impact the advantages of double learning.
+\texttt{ReplayMemory} provides a simple buffer from which we can sample experiences uniformly at random. This is used in DQN and in double Q-learning as well, as it does not impact the advantages of double learning.
 
 \texttt{PrioritizedReplayMemory} is a more complex mechanism which memorizes the TD-errors of transitions and computes some priorities at every learning step, according to the algorithm in Section \ref{section:per}.
 The prioritized sampling operation does not use a uniform distribution.
 Instead, we use a sum tree to select transitions according to the error-based probability distribution.
 
-Both implementations are able to deduce their maximum allowed capacity from the total amount of memory (in gigabytes) given in the configuration file.
-This mechanism is useful inside cloud instances as it allows the training process to use as much as possible of the machine's available resources.
+Both implementations are able to deduce their maximum capacity from the total amount of memory (in gigabytes) given in the configuration file.
+This mechanism is useful for remote execution on cloud instances, where as the amount of RAM available on the machine is pre-determined. We can specify a fixed chunk of memory to be allocated to the training process, to use as much of the available resources as possible.
 
 \section{Technologies} \label{section:technologies}
-In our framework we integrate a multitude of helper libraries, in order to focus on the quality and performance of our implementation.
-Our stack enables us to support both CPU and GPU processing, to prototype quckly and to leverage the stability of battle-tested RL and libraries.
-Below we present the most important libraries we use and mention their role in the project.
-% possible extensions: Google Cloud Compute, TensorBoard
+Our framework leverages the stability of several battle-tested machine learning libraries.
+Our choice of tools allows us to focus on the quality and performance of our implementation.
+Our stack supports both CPU and GPU processing and allows quick prototyping, which was essential in the early stages of the project.
+Below we present the most important libraries we use and mention their role in our project.
+% possible extensions: Google Cloud Compute, TensorBoard, Anaconda, matplotlib
 
 \subsection*{PyTorch}
 \textbf{PyTorch} is an open-source machine learning library based on the Torch library.
 It was created with a focus on the Python language \cite{pytorch-book} and thus has a strong interface for Python, although a C++ interface is also provided.
 PyTorch has been built for speed and provides GPU-accelerated tensor support as well as a strong neural network package -- \verb|torch.nn|.
-A distinguishable mechanic of this framework is its auto-differentiation implementation (called \texttt{autograd}) which allows building dynamic computation graphs, making the framework more flexible.
-PyTorch is used in our framework to build the neural network.
-Tensor computations are also an integral part of our algorithm implementations.
+A distinguishable mechanic of this framework is its auto-differentiation implementation (called \texttt{autograd}) which allows building dynamic computation graphs, making the framework flexible and suitable for quickly prototyping machine learning models.
+PyTorch is used in our framework to build the convolutional networks and to perform tensor computations, an integral part of our algorithm implementations.
 
 \subsection*{NumPy}
 NumPy is a scientific computing package for Python, supporting linear algebra, and featuring a complex random number library and versatile data structures for vectorized computation.
-We use NumPy \verb|ndarray|s as a CPU-only equivalent to PyTorch's tensors, in areas of our program which do not need to support both processes.
-For example, the replay memory's buffer is exclusively held in main memory and thus does not require tensors, but we do perform vectorized operations and operations involving randimization.
-NumPy's advantages are its speed and its strong documentation.
+We use NumPy \verb|ndarray|s as a CPU-only equivalent to PyTorch's tensors, in areas of our program which do not need to support both modes of computation.
+For example, the replay memory's buffer is exclusively held in main memory and thus does not require tensors, but we do perform vectorized operations and operations involving randomization.
+Besides its speed (NumPy's core functionality is written in C), another important benefit is its comprehensive documentation.
 
 \subsection*{OpenAI Gym}
 In order to test our agent implementations, we rely on an excellent solution developed by the OpenAI team.
 \textbf{OpenAI Gym} \cite{openai-gym} provides ready-made reinforcement learning environments, as well as flexible tools with which programmers can create their own.
 We use OpenAI's supplied Atari environments, which provide interfaces to keep track of in-game score, lives, health or other indicators.
-Those variables, primarily the score, serve as the agent's reward signals.
+Those variables, primarily the score, serve as factors in the reward computation.
 
 \subsection*{Jupyter Notebook}
-Jupyter Notebook is a web-based environment for creating interactive ``notebooks'' -- documents which interleave Python code with Markdown notes, Matlib plots and other objects.
-They are a great tool for quickly prototyping models and documenting one's solution to a problem and are widespread in the Python data science community.
-Notebook is only one project among many released by Project Jupyter as open-source software.
-We extensively used notebooks during the early phase of the framework.
-More importantly, we incorporate a separate directory for special notebooks for studying algorithm performance, to plot agent performance and to compare different training runs.
+Jupyter Notebook is a web-based environment for creating interactive ``notebooks'' -- documents which interleave Python code with Markdown notes, \texttt{matplotlib} plots and other objects.
+They are a great tool for quickly prototyping models and documenting one's solution to a problem and are in widespread use in the Python data science community.
+Juypter Notebook is only one project among many released by Project Jupyter as open-source software.
+We extensively used notebooks for protyping during the early phase of the framework.
+We incorporate a separate directory for special notebooks for studying algorithm performance, to plot agent performance and to compare different training runs.
 
 \section{User Manual} \label{section:user-manual}
 This section presents the basics of operating our framework to use one of our existing agents in the library to run a training job and collect its data.
 Below we list commands for training, evaluation and deployment and we explain flags and configuration variables.
 
 \subsection*{Training}
-Training can be initialized locally on the user's computer or deployed on a cloud environment.
-The starting script \verb|train.py| initializes and starts the \verb|Trainer|, changes its mode of operation based on the relevant flags and passes it the configuration file.
+Training can be initialized locally, on the user's computer, or remotely, in a cloud environment.
+The starting script \verb|train.py| initializes the \verb|Trainer|, changes its mode of operation based on the relevant flags and loads the configuration file.
 \begin{verbatim}
 python train.py -c <configuration-file> <options>
 \end{verbatim}
@@ -431,9 +431,9 @@ evaluation:
   ...
 \end{verbatim}
 
-The \verb|training| node contains general information about the training job, including a label which will help us track this job when we analyze tha data and compare it the results of other jobs.
+The \verb|training| node contains general information about the training job, including a label to track it when comparing multiple results.
 
-The \verb|model| node contains hyperparameters required by that particular algorithm to run. In this case, we pass the hyperparameters required by vanilla deep Q-learning.
+The \verb|model| node contains hyperparameters required by a particular algorithm to run.
 A lot of the parameters are common among the various implementations (for example, \verb|learning_rate| is a general parameter of the neural network).
 
 The \verb|checkpoints| settings group controls the checkpoint manager, as discussed in its relevant subsection in the \emph{Implementation} section.
@@ -451,7 +451,7 @@ For evaluation, we similarly run:
     python play.py -c <configuration-file> <options>
 \end{verbatim}
 
-The evaluation environment is designed to test an agent in a more stable environment, with no randimization.
+The evaluation environment is designed to test an agent in a more stable environment, with no randomization.
 This running mode has the addition of outputing \textbf{video captures} of the emulator in a dedicated \verb|monitor| directory (as specified by the \verb|monitor.path| setting in the configuration), so that we can study an agent's behaviour by directly observing any strategies it might have developed or any areas in which it have failed to develop one.
 
 \subsection*{Utility Scripts}

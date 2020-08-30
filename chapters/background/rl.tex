@@ -235,8 +235,6 @@ Different algorithms interrelate the two phases in different ways, e.g. value it
 \textbf{Generalized policy iteration} is a broad framework specifying only that policy evaluation and policy iteration are used alongside each other, abstracting the exact details of their interaction.
 Most reinforcement learning algorithms can be described by GPI at the high-level.
 
-\clearpage
-
 \subsection{Monte Carlo Learning} \label{rl:mc}
 In reinforcement learning, Monte Carlo is a family of methods that learn from complete episodes of experience by sampling average returns.
 The term “Monte Carlo” is broadly used in mathematics to mean any evaluation method that involves a significant random component \cite{rlai}.
@@ -300,7 +298,8 @@ This is called \textbf{bootstrapping} and can be intuitively described as the id
 \begin{figure}[h]
     \includegraphics[width=0.7\textwidth]{td-mc-backups.png}
     \centering
-    \caption[Caption]{Backup tree for one update step of TD(0) next to one update step of every-visit Monte Carlo.} \label{fig:td-mc-update-steps}
+    \caption{Backup tree for one update step of TD(0) next to one update step of every-visit Monte Carlo.}
+    \label{fig:td-mc-update-steps}
 \end{figure}
 
 In Figure \ref{fig:td-mc-update-steps}, an \emph{update step} is not a time-step but instead refers to an iteration of each algortihm.
@@ -391,5 +390,3 @@ It follows the TD learning pattern presented in Equation \ref{eqn:td-td}. Here, 
         R_{t+1} + \gamma \max_{a \in A}{Q(S_{t+1}, a)} - Q(S_t, A_t)
     ]
 \end{equation}
- 
-\clearpage

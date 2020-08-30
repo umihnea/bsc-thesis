@@ -65,7 +65,7 @@ A chess-playing agent has a finite number of possible actions at every step.
 Chess is therefore a \emph{discrete} environment.
 An agent driving a car, on the other hand, has control over some real-valued parameters of the car (steering angle, speed and so on).
 The domain of possible actions in real-world driving is therefore \emph{continuous}.
-In the same way, we can describe time: in discrete time, time spent deciding does not influence the outcome. The opposite is true for continuous time representation -- in real-time driving, every second spent not making a decision is stalling.
+In the same way, we can describe time: in discrete time, time spent deciding does not influence the outcome. The opposite is true for a continuous time representation -- in real-time driving, every second spent not making a decision is stalling.
 
 \textbf{Known} and \textbf{unknown}.
 This refers to the agent's knowledge of the laws governing its environment. In a known environment, the agent knows the rules of its world a priori. Otherwise, an agent has to learn how the environment works in order to make effective decisions.
@@ -83,12 +83,12 @@ Russel and Norvig provide an excellent description of \textbf{learning} in intel
     ``Learning in intelligent agents can be summarized as a process of modification of each component of the agent to bring the components into closer agreement with the available feedback information, thereby improving the overall performance of the agent.''
 \end{quote}
 
-To restate this section's introduction, agent-based approaches capture a more accurate definition of intelligence than classic knowledge-based AI.
+To restate this section's introduction, agent-based approaches capture a more accurate definition of intelligence than classic rule-based AI.
 This advantage is due to agents' ability to learn in initially unknown environments.
 Exploration and learning allow agents to expand on initial knowledge, if any --
 learning agent approaches can achieve substantial results even when starting with zero expert knowledge, as demonstrated by the state-of-the-art Go-playing agent AlphaZero \cite{alpha-zero}.
 
-According to \cite{aima}, an agent can be divided in four subsystems:
+An agent can be divided in four subsystems as enumerated below \cite{aima}. An illustration of this ensemble is given in Figure \ref{fig:aima-learning-agent}.
 \begin{enumerate}
     \item \textbf{The learning element} is resposible for improving the agent by incorporating information from the environment.
     \item \textbf{The performance element} perceives the environment and selects actions and is the object of improvement.
@@ -96,12 +96,10 @@ According to \cite{aima}, an agent can be divided in four subsystems:
     \item \textbf{The problem generator} suggests novel actions, in order to expand knowledge.    
 \end{enumerate}
 
-A learning agent overview figure, closely following the schematic provided in \cite{aima}, is shown in Figure \ref{fig:aima-learning-agent}.
-
 \begin{figure}[ht]
     \includegraphics[width=0.7\textwidth]{aima-general-learning-agent}
     \centering
-    \caption{An overview schematic for the generalized model of a learning agent.}
+    \caption{An overview schematic for the generalized model of a learning agent. (Figure adapted from \cite{aima}.)}
     \label{fig:aima-learning-agent}
 \end{figure}
 
@@ -124,5 +122,3 @@ This happens because the agent bases its calculations on limited knowledge.
 It needs a component to take care of adding new information into its system.
 The problem generator ensures effective \textbf{exploration}:
 choosing options that yield suboptimal results in the short term, in order to discover better strategies on the long term.
-
-\clearpage  % pushes the RL chapter onto the next page instead of having dangling
