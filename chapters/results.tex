@@ -2,7 +2,7 @@ This chapter introduces our methodology and presents our experiment setup and re
 First of all, we introduce and justify the methods we use to evaluate agent performance in the Pac-Man environment.
 We then show the results obtained using the chosen technique and analyze them, using the tools provided in our framework.
 
-\section*{Evaluation in Reinforcement Learning}
+\section{Evaluation in Reinforcement Learning}
 \textbf{Evaluation} is a fundamental part of any machine learning project and reinforcement learning is not an exception to this rule.
 The goal of evaluation in RL is analogous to that of supervised learning, in the sense that both are concerned with measuring how well a model \emph{generalizes}.
 
@@ -15,9 +15,8 @@ Experiments in supervised learning can and must split their data into specific s
 
 Attempts to correct this overlap between training and evaluation in experimental RL is an active area of research.
 One compelling paper concerning itself with this problem, published by OpenAI researchers, proposes building \emph{procedural generation} into environments \cite{procgen-paper}.
-\clearpage
 
-\section*{Setup and Methodology}
+\section{Setup and Methodology}
 The evaluation \textbf{methodology} we chose for this thesis was used before across numerous RL studies, including in DeepMind's DQN and Double DQN works \cite{atari-dqn,ddqn-paper} and has been originally proposed in the Atari Learning Environment (ALE) paper \cite{ale-paper}, which was specifically developed to analyze agent perfromance in video game environments on the Atari 2600.
 We follow the above guidelines closely, with a few exceptions.
 For example, we will not be including including human performance in our benchmark.
@@ -61,7 +60,7 @@ Our exploration coefficient $\varepsilon$ is chosen such that the lower bound is
     \label{tab:our-hyperparameters}
 \end{table}
 
-\section*{Results}
+\section{Results}
 We train each agent for \num{122240} episodes, without keeping a count of environment steps (i.e., actions played inside the emulator) or frames seen, so the exact number of steps can vary between training runs.
 Other studies design their training routines to run for a finite number of steps.
 However, in our design, one episode produces one data point. We have chosen not to follow this guideline as it would be easier to stop when we have gathered exactly the same amount of data on each run.

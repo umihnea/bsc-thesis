@@ -185,8 +185,8 @@ This work is the result of my own activity. I have neither given nor received un
 
 
 \chapter{Introduction}
-Over the relatively recent years, \textbf{reinforcement learning (RL)} has gained immense popularity.
-Stemming from the agent-based approach to artificial intelligence, it is a unique paradigm within the field of machine learning.
+Over the relatively recent years, Reinforcement Learning (RL) has gained immense popularity.
+Stemming from the agent-based approach to artificial intelligence, it is a unique paradigm within the field of Machine Learning (ML).
 RL directly focuses on building agents that make optimal decisions in an environment in order to maximize a notion of cumulative reward.
 RL has a broad focus and researchers have trained RL agents to solve a variety of tasks.
 
@@ -197,24 +197,30 @@ In 2016, AlphaGo became world renowned after defeating Lee Sedol, 18-times world
 \footnotetext{Gary Kasparov, the legendary chess champion, was defeated by IBM chess-playing computer DeepBlue in 1997, marking the first superhuman computer performance in chess.}
 
 However, a multitude of interesting studies in RL focuses on agents learning in \textbf{video games} or other game-like environments.
-In Mnih et al.'s Atari DQN paper \cite{atari-dqn}, which is covered in this thesis, the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
+In \emph{Mnih et al.}'s Atari DQN paper \cite{atari-dqn}, which is covered in this thesis, the DeepMind team proposes a method to train agents to play Atari video games exclusively from raw video input.
 The study produced agents able to surpass human-level performance in Breakout, Enduro and Pong.
 More importantly, it inspired a long chain of attempts of the research community to improve the original algorithm and beat the records it set.
-% Starcraft II and Dota 2
+More recent reasearch in Deep Reinforcement Learning targets more complex video games -- Starcraft II by DeepMind in \cite{starcraft-le-paper} and DoTA 2, targeted by OpenAI with OpenAI Five \cite{openai-five-paper}.
 
-This thesis aims to explore a challenging video game environment by analyzing the performance of existing algorithms in order to discover potentially underexplored areas in the design of AI agents.
-We hope to outline some limitations of the current standards in order to benefit the further development of this field.
-
-Toy problems such as playing video games from raw sensory input are the training ground which precedes real-world environments which require real-time intelligent control, such as self-driving cars.
-Innovation in AI, as in all domains, begins at a small scale.
-
-In order to accomplish our objective, we aim to build an agent framework that provides intuitive yet easily extensible tools, a solid testbed for experiments and means of data analysis.
+Following this trend, our thesis's main aim is to explore a challenging video game environment by testing the performance of the existing standards in Deep Reinforcement Learning.
+We hope to discover potentially underexplored areas in the design of AI agents and to outline some limitations of the existing standards, in order to further the development of this field.
 
 Our choice for an environment for studying agents is a variant of popular arcade video game \emph{Pac-Man}, developed and released by Namco Ltd. in 1980.
 This choice is motivated by two factors: the potential challenges it poses to AI and its fun and intuitive appeal for humans.
 The game is challenging for AI agents because it involves balancing the goal of exploration and point acquisition with escaping different classes of enemies that chase the player.
 
-This thesis can be roughly divided into a theoretical part which is compact and contained entirely within one exhaustive chapter, and a practical part, composed of an application chapter followed by an analysis of the obtained results.
+Toy problems such as playing video games from raw sensory input are the training ground which precedes real-world environments which require real-time intelligent control, such as self-driving cars.
+Innovation in AI, as in all domains, begins at a small scale.
+
+In order to accomplish our objective of benchmarking existing standards, we build an agent framework featuring the implementation of four major algorithms: the original DQN and three of its successors -- Double DQN, Prioritized Experience Replay (PER) and a hybrid of the latter two (Double PER).
+The provided algorithms use the same model architecture, a convolutional neural network proposed in \cite{atari-dqn}, but each differs in the way it learns.
+The framework additionally provides easily configurable training and evaluation logic, a solid \emph{Pac-Man} environment for experiments and intuitive yet easily extensible tools for results analysis.
+
+Our framework is a crossover between existing concepts but is a completly new experiment platform.
+It provides its own extensible agent implementations -- similar to OpenAI Baselines -- which are built interface with OpenAI Gym, but also includes its own tools for analysis, bridging the gap between design and evaluation.
+Just as importantly, we combine that with flexible configurations, extensibility, Cloud-first deployment and PyTorch support (which by itself is generally limited among similar platforms).
+
+This thesis can be roughly divided into a theoretical part which is compact and contained entirely within one exhaustive chapter, and a practical part, comprised of an Application chapter describing our framework followed by a section describing our experiments an analysis of their results.
 
 \emph{Chapter \ref{chapter:background}, ``Background''} presents a comprehensive overview of the theory necessary to understanding reinforcement learning.
 We start by introducing agent-based AI, then continue with a
@@ -222,11 +228,13 @@ section dedicated to understanding fundamental concepts in RL.
 The second half of the chapter is dedicated to deep reinforcement learning, which can roughly be defined as combination of classic RL and neural networks.
 Among the topics covered in the second half are convolutional neural networks (ConvNets) and some proeminent solution methods in deep RL.
 
-\emph{Chapter \ref{chapter:practical}, ``Playing Pac-Man using Deep Q-learning''} states the problem and presents the chosen algorithms for our agents.
-In particular, we present deep Q-networks (DQN) and two of its derviatives -- double DQN and prioritized experience replay.
-Furthermore, we go in-depth over the structure of the framework and its implementation.
+\emph{Chapter \ref{chapter:practical}, ``Playing Pac-Man using Deep Q-learning''} formally states our problem, explains our chosen algorithms -- DQN, Double DQN and Prioritized Experience Replay (PER) -- and presents our framework's implementation.
+We present an in-depth rundown of the structure of the framework, composed of a \texttt{common} module containing code shared amongst all agent implementations (including for training and evaluation), separate modules for each agent (the most important being \texttt{deepq} for DQN), and auxiliary modules -- agent subcomponents (in particular, the agent memory in \verb|replay_memory|), a model checkpoint manager, a sum tree implementation, etc.
+Separate from the main code, we have a collection of interactive notebooks for plotting and analyzing results.
 
-\emph{Chapter \ref{chapter:results}, ``Results and Evaluation''} presents our methods of measuring the performance of the agents and analyzes the obtained data of our various experiments.
+\emph{Chapter \ref{chapter:results}, ``Results and Evaluation''} defines evaluation in the context of RL, presents our methods of measuring the performance of the agents and analyzes the obtained data of our various experiments.
+As a quick summary, we obtain results which confirm existing studies. Our highest ranking algorithms in with regard to mean score in Pac-Man are PER, followed closely by Double DQN.
+Our analysis shows that both are an improvement over the original DQN and outperform a random agent by a considerable margin (up to $12$ times).
 
 In our ending chapter, \emph{Chapter \ref{chapter:conclusion}, ``Conclustion and Future Work''}, we sum up our methods and results and we identify future areas of improvement. Additionally, we try to predict the direction of RL research based on our conclusions.
 
