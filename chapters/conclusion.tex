@@ -1,11 +1,12 @@
-In this thesis, we introduced the fundamentals of \emph{reinforcement learning} -- a field of machine learning concerned with developing systems which learn based on interaction with the environment.
+This thesis began by presenting the fundamentals of Reinforcement Learning (RL) -- a field of machine learning concerned with developing systems which learn based on interaction with the environment.
 What distinguishes RL from other methods is the concept of reward signal, which provides feedback on whether the system behaves in a desirable way with regard to the goal of a task.
 
-The transfer of knowledge from deep learning to the classical methods in RL is revolutionizing the field.
+We furthermore explore how the transfer of knowledge from deep learning to the classical methods in RL is revolutionizing the field.
 In the second part of Chapter \ref{chapter:background}, we presented some of the techniques that emerged to build more performant intelligent agents, leveraging the strength and robustness of neural networks, and especially of the ConvNet architecture.
 
-In order to demonstrate the principles of deep RL in action, we have implemented a light framework, featuring a collection of algorithms in deep Q-learning, originally described in \cite{atari-dqn}, and its successors in the DQN family.
-We benchmark and analyze the performance of our selected approaches on our task environment of choice -- Pac-Man. Solving Pac-Man is an interesting task and features some open challenges, as mentioned in Section \ref{section:modelling-the-problem}.
+In order to demonstrate the principles of deep RL in action, we have implemented a light framework, featuring a collection of algorithms including Deep Q-learning, originally described in \cite{atari-dqn}, and its successors -- Double DQN, Prioritized Experience Replay (PER) and Double PER.
+We benchmarked and analyzed the performance of our selected approaches on our task environment of choice -- Pac-Man. Solving Pac-Man is an interesting task and features some open challenges, as mentioned in Section \ref{section:modelling-the-problem}.
+Our ranking shows the top performer is PER both in learning and in evaluation, despite Double DQN coming close and exhibiting a more stable ascent.
 
 The following paragraphs give a summary of the most notable \emph{areas of potential improvement} for this work.
 
@@ -14,8 +15,8 @@ One possible extension to this thesis is hyperparemeter search.
 Most studies have relied on the entire set of 49 Atari games to study the efficiency of their approaches.
 In our thesis, however, we solve a more precisely defined task and could have benefited from tuning hyperparameters to some extent.
 There is a strong probability that the set of hyperparameters which worked the best on Pong or Enduro does not work as well in Pac-Man.
-However, one problem with auto-tuning is a practical problem, in that applying it to a relatively large problem such as ours requires a large amount of continuously-available compute resources.
-On the basis of these large computation costs, we have decided that it would be cost ineffective.
+However, one issue with auto-tuning is its high computational demand, in that applying it to a relatively large problem such as ours requires a large amount of continuously-available computational resources.
+On the basis of these large computation costs, we have decided that it would be cost ineffective to pursue.
 
 Another such extension point is including policy-based and actor-critic methods into the benchmark.
 In our background section, we touch on the subject of policy-based methods and their particular advantages.
