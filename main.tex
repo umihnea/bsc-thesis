@@ -7,6 +7,7 @@
 \usepackage{subcaption}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \setlength{\headheight}{15pt}
+\usepackage{sectsty}
 
 % hyperref
 % source: timmurphy.org/2014/03/11/latex-table-of-contents-with-clickable-links/
@@ -68,7 +69,7 @@
     {
         \bfseries
         \LARGE \uppercase{Diploma Thesis} \\[1.5cm]
-        \huge Using Deep Q-networks to learn Pac-Man
+        \LARGE \uppercase{Using Deep Q-networks to learn Pac-Man}
     }\\[4cm]
 
     % Author and Supervisor
@@ -115,7 +116,7 @@
     {
         \bfseries
         \LARGE LUCRARE DE LICENȚĂ \\[1.5cm]
-        \huge Folosind Deep Q-networks pentru a învăța Pac-Man
+        \LARGE \uppercase{Folosirea de Deep Q-networks pentru a învĂȚa Pac-Man}
     }\\[4cm]
     
     % Author and Supervisor
@@ -146,22 +147,31 @@
 \blankpage
 
 \chapter*{Abstract}
-This thesis presents an autonomous agent capable of learning optimal behaviour in video game environments.
+\small
+The main purpose of this thesis is to implement, test and analyze the results of four fundamental algorithms in Deep Reinforcement Learning, in order to select the most performant approach at playing a variant of the famous arcade game \emph{Pac-Man}.
+Our collection of implemented agents features a replication of DeepMind’s strategy, using Deep Q-networks (DQN), as well as two other performant successors to the original -- Double DQN, Prioritized Experience Replay (PER), and a hybrid of the latter two (Double PER).
+A secondary aim is to build the necessary tools to study the strength of Pac-Man as a benchmark in Reinforcement Learning (RL), enabling others to collaborate and extend it.
 
-We focus on a variant of the famous arcade game \emph{Pac-Man}, due to its high potential as a research tool in the study of intelligent agents, as well as intuitive appeal for human players.
+% Despite seeming like a toy problem, learning to solve virtual environments provides insight into complex, real-world environments at an insignificant fraction of the cost of running realistic simulations.
 
-Despite seeming like a toy problem, learning to solve virtual environments provides insight into complex, real-world environments at an insignificant fraction of the cost of running realistic simulations.
+The theoretical part of this thesis starts by exploring classical Reinforcement Learning techniques, then transitions to modern approaches which leverage Artificial Neural Networks (ANNs) to build more advanced agents, capable of solving more complex tasks.
 
-The main purpose of this thesis is to implement, test and analyze results of different algorithms for autonomous learning and select the most performant approach at playing \emph{Pac-Man}.
-A secondary aim is to test whether Pac-Man is a strong benchmark environment in \textbf{reinforcement learning (RL)} and search for challenges which would allow researchers to gain further insight into AI agents.
+The practical part consists of a Python framework for training, evaluating and benchmarking the performance of RL agents.
+Our framework's main feature is the library of agents (software robots), actualizing the four aformentioned approaches.
+Besides this, it also provides building blocks for training and evaluation logic, along with tools for visualizing and analyzing the results.
+The main focus of the framework is on extensibility and ease of remote deployment.
 
-The theoretical part of this thesis starts by exploring classical \textbf{reinforcement learning} techniques, then transitions to modern approaches which leverage \textbf{artificial neural networks (ANNs)} as functional approximators for RL.
+For our evaluation, we start by training each agent by running game simulations for approximatively \num{120000} episodes per agent, tracking the score of each one for analysis.
+After training is complete, each agent is again run for \num{2000} episodes to collect score data.
+In our ranking, the top performing algorithms based on mean obtained score during evaluation are Double DQN and PER, scoring above the DQN baseline and several times over a random agent included for control.
 
-The practical part consists of multiple algorithm implementations, as well as a light framework for training, evaluating and benchmarking the performance of RL agents.
-The provided agents include a replication of DeepMind’s \textbf{deep  Q-learning} strategy \cite{atari-dqn}, as well as more performant successors to the original paper: DDQN \cite{ddqn-paper} and Prioritized Experience Replay \cite{per-paper}.
+Our contribution consists of reproducing and studying the performance of four fundamental algorithms in deep RL on the game of Pac-Man.
+On one hand, providing our own rendition of the algorithms, based on their original specifications, and comparing our obtained performance with them, we study the reproducibility of the original papers.
+On the other hand, our thesis introduces a novel perspective by focusing on depth over breadth.
+Other works, including the original studies themselves, are explicitly focused on one-size-fits-all approaches and exclusively evaluate one algorithm across multiple games.
+In our thesis, we reverse the perspective and instead rank several algorithms based on their performance in Pac-Man, which we believe is a suitable benchmark due to its highly dynamic nature.
 
-The agents are implemented using PyTorch, a powerful Python machine learning library based on Torch. We use the Atari toolkit from OpenAI Gym, which was designed for RL and provides interfaces to keep track of in-game score, lives and other indicators.
-Finally, we analyze our results using Jupyter Notebook, a well-established Python data science tool.
+We use a suite of high-performance libraries. The neural networks powering the agents are implemented using PyTorch, a powerful Python machine learning library based on Torch. The Atari toolkit from OpenAI Gym provides our Pac-Man environment, and we analyze our results using Jupyter Notebook, a well-established Python data science tool.
 
 \hfill \break
 This work is the result of my own activity. I have neither given nor received unauthorised assistance on this work.
