@@ -260,7 +260,16 @@ The relationships among the agent classes is detailed in Figure \ref{fig:agent-c
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{app-agent-inheritance-diagram.png}
-    \caption{A UML diagram representing the agent classes and their inheritance relationships.}
+    \caption{A diagram representing the agent classes and their inheritance relationships.}
+    \label{fig:agent-class-diagram}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{diagram_central_on_agent.png}
+    \caption{A diagram representing how various classes interact with the \texttt{DQNAgent} class.
+    The other agent classes follow the same blueprint.
+    }
     \label{fig:agent-class-diagram}
 \end{figure}
 
@@ -271,7 +280,7 @@ An agent entity is initialized from a set of hyperparameters loaded from the con
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{dqn-architecture.png}
+    \includegraphics[width=0.9\textwidth]{dqn-architecture.png}
     \caption{High-level architectural view of an agent in classic DQN (Illustration from \cite{mpmdrl}).}
     \label{fig:dqn-architecture}
 \end{figure}
@@ -310,6 +319,7 @@ Our optimizer is \verb|RMSProp|, as in the original work \cite{atari-dqn}.
 
 Figure \ref{fig:dqn-architecture} provides a high-level recap, using a graphical depiction of how the different components interact during the learning step of the agent.
 
+\clearpage
 
 \subsubsection{Model Architecture and the \texttt{DeepQNetwork} Class} \label{section:model-arch}
 
@@ -336,21 +346,27 @@ In the case of a neural network, they correspond to the forward pass and the bac
 
 \subsection{The \texttt{replay\_memory} Package} \label{section:replay-memory-implementation}
 
+% \begin{figure}[ht]
+%     \centering
+%     \begin{subfigure}[b]{0.5\textwidth}
+%         \centering
+%         \includegraphics[width=0.5\textwidth]{app-replay-memory-class.png}
+%         \caption{Class diagram of \texttt{ReplayMemory}.}
+%         \label{fig:rm-diagram}
+%     \end{subfigure}%
+%     \hfill
+%     \begin{subfigure}[b]{0.5\textwidth}
+%         \centering
+%         \includegraphics[width=0.5\textwidth]{app-prioritized-replay-memory-class.png}
+%         \caption{\texttt{PrioritizedReplayMemory}}
+%         \label{fig:prm-diagram}
+%     \end{subfigure}
+% \end{figure}
 \begin{figure}[ht]
     \centering
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.5\textwidth]{app-replay-memory-class.png}
-        \caption{Class diagram of \texttt{ReplayMemory}.}
-        \label{fig:rm-diagram}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.5\textwidth]{app-prioritized-replay-memory-class.png}
-        \caption{\texttt{PrioritizedReplayMemory}}
-        \label{fig:prm-diagram}
-    \end{subfigure}
+    \includegraphics[width=\textwidth]{diagram_central_on_replay_memory.png}
+    \caption{Diagram representing the \texttt{replay\_memory} classes and the relations among them.
+    \texttt{SumTree} is also shown in this diagram due to its relevance to the functioning of the replay mechanism.}
 \end{figure}
 
 The project provides two implementations for the agent’s replay memory.
@@ -363,6 +379,8 @@ Instead, we use a sum tree to select transitions according to the error-based pr
 
 Both implementations are able to deduce their maximum capacity from the total amount of memory (in gigabytes) given in the configuration file.
 This mechanism is useful for remote execution on cloud instances, where as the amount of RAM available on the machine is pre-determined. We can specify a fixed chunk of memory to be allocated to the training process, to use as much of the available resources as possible.
+
+\clearpage
 
 \section{Technologies} \label{section:technologies}
 Our framework leverages the stability of several battle-tested machine learning libraries.
