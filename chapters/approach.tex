@@ -85,7 +85,7 @@ Significant score increases are provided by eating pellets but a more interestin
 Each ghost eaten will provide a higher reward, thus conditioning the agent to chain as many ``kills'' as possible.
 Typical of arcade games, the mechanics are built such that the score can \emph{only increase} over time.
 This creates a necessity to \emph{counterbalance} by finding opportunities for \textbf{punishment}.
-We choose to strongly penalize the the agent for losing a life.
+We choose to strongly penalize the agent for losing a life.
 There are other possible candidates for ``punishment'' events, but we consider ``death on ghost contact'' to be the most important for capturing the goal of the game.
 
 \section{Algorithms} \label{section:approach-algorithms}
@@ -217,6 +217,21 @@ It is the agent’s job to parse and validate the data.
 For training, we initialize every needed component: agent, environment, checkpoint manager, etc.
 The main loop consists of fetching the current state from the emulator, feeding it to the agent for learning and processing, then playing the agent’s chosen action into the emulator.
 At every iteration, we log scores, compute statistics for plotting and call the checkpoint manager to check if the current state needs to be saved.
+An activity diagram of the training process is provided in Figure \ref{fig:training-loop-activity-diagram}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{training_activity_diagram.png}
+    \caption{Activity diagram of the main training loop in our \texttt{train()} function.}
+    \label{fig:training-loop-activity-diagram}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{run_episode_activity_diagram.png}
+    \caption{An activity diagram corresponding to the ``Run Episode'' sub-task from Figure \ref{fig:training-loop-activity-diagram}. This diagram highlights the agent-environment loop.}
+    \label{fig:run-episode-diagram}
+\end{figure}
 
 The \texttt{Trainer} class has a \emph{graceful exit} procedure, the \texttt{shutdown} method.
 It is triggered automatically at the end of training and mapped to the \texttt{SIGKILL} signal.
@@ -255,12 +270,12 @@ representing the number of steps between two consecutive snapshots, and the allo
 \subsection{Agent Modules} \label{section:agent-modules}
 
 The framework contains a collection of agents, currently consisting of four different algorithms in the DQN family.
-The relationships among the agent classes is detailed in Figure \ref{fig:agent-class-diagram}.
+The relations among the agent classes is detailed in Figure \ref{fig:agent-class-diagram}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{app-agent-inheritance-diagram.png}
-    \caption{A diagram representing the agent classes and their inheritance relationships.}
+    \caption{A diagram representing the agent classes and their inheritance relations.}
     \label{fig:agent-class-diagram}
 \end{figure}
 
@@ -319,7 +334,7 @@ Our optimizer is \verb|RMSProp|, as in the original work \cite{atari-dqn}.
 
 Figure \ref{fig:dqn-architecture} provides a high-level recap, using a graphical depiction of how the different components interact during the learning step of the agent.
 
-\clearpage
+% \clearpage
 
 \subsubsection{Model Architecture and the \texttt{DeepQNetwork} Class} \label{section:model-arch}
 
